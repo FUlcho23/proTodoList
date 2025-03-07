@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.big.mapper.BoardMapper">
+   <select id="selectBoardList" resultType="org.big.dto.BoardDto">
+        <![CDATA[
+           SELECT
+              board_idx,
+              title,
+              hit_cnt,
+              created_datetime
+           FROM
+              t_board
+           WHERE
+              deleted_yn = 'N'
+           ORDER BY board_idx DESC
+        ]]>
+   </select>
+
+   <insert id="insertBoard" parameterType="org.big.dto.BoardDto"
+      useGeneratedKeys="true">
+      <selectKey keyProperty="boardIdx" resultType="int"
+         order="AFTER">
+         SELECT tboard_seq.currval FROM DUAL
+      </selectKey>
+        <![CDATA[
+           INSERT INTO t_board
+           (
+              board_idx,
+              title,
+              content,
+              created_datetime,
+              creator_id
+           )
+           VALUES
+           (
+              tboard_seq.nextval,
+              #{title},
+              #{content},
+              sysdate,
+              'scott'
+           )
+        ]]>
+   </insert>
+
+   <update id="updateHitCount" parameterType="int">
+      <![CDATA[
+         UPDATE
+            t_board
+         SET
+            hit_cnt = hit_cnt + 1
+         WHERE
+            board_idx = #{boardIdx}
+      ]]>
+   </update>
+
+   <select id="selectBoardDetail" resultType="org.big.dto.BoardDto"
+      parameterType="int">
+      
+      <![CDATA[
+         SELECT
+            board_idx,
+            title,
+            content,
+            hit_cnt,
+            created_datetime,
+            creator_id
+         FROM
+            t_board
+         WHERE
+            board_idx=#{boardIdx} AND deleted_yn='N'
+      ]]>
+   </select>
+
+   <update id="updateBoard" parameterType="org.big.dto.BoardDto">
+      <![CDATA[
+         UPDATE
+               t_board
+            SET
+               title = #{title},
+               content = #{content},
+               updated_datetime = sysdate,
+               created_datetime = updated_datetime,
+               updator_id = 'scott'
+            WHERE
+               board_idx = #{boardIdx}
+      ]]>
+   </update>
+
+   <update id="deleteBoard" parameterType="int">
+      <![CDATA[
+         DELETE FROM t_board
+           WHERE board_idx = #{boardIdx}
+      ]]>
+   </update>
+   <update id="deleteBoardFile" parameterType="int">
+      <![CDATA[
+         DELETE FROM t_file
+           WHERE board_idx = #{boardIdx}
+      ]]>
+   </update>
+   
+   <select id="getFilePathsByBoardIdx" resultType="string"
+      parameterType="int">
+      SELECT stored_file_path
+      FROM t_file
+      WHERE board_idx = #{boardIdx}
+   </select>
+   
+   
+   
+   <insert id="insertBoardFileList" parameterType="java.util.List">
+    <![CDATA[
+        INSERT ALL
+    ]]>
+      <foreach collection="list" item="item" index="index" open=""
+         separator=" " close="SELECT * FROM DUAL">
+         INTO t_file (
+         idx,
+         board_idx,
+         original_file_name,
+         stored_file_path,
+         file_size,
+         creator_id,
+         created_datetime
+         )
+         VALUES (
+         tfile_seq.nextval,
+         #{item.boardIdx},
+         #{item.originalFileName},
+         #{item.storedFilePath},
+         #{item.fileSize},
+         'scott',
+         SYSDATE
+         )
+      </foreach>
+   </insert>
+   
+   <select id="selectBoardFileList" parameterType="int" resultType="org.big.dto.BoardFileDto">
+   <![CDATA[
+   		 SELECT
+            idx,
+            board_idx,
+            original_file_name,
+            ROUND(file_size / 1024) AS file_size
+         FROM
+            t_file
+         WHERE
+            board_idx = #{boardIdx}
+            AND deleted_yn = 'N'
+   ]]>
+   
+   </select>
+   
+   <select id="selectBoardFileInformation" parameterType="map" resultType="org.big.dto.BoardFileDto">
+   <![CDATA[
+   		SELECT
+   			original_file_name,
+   			stored_file_path,
+   			file_size
+   		FROM
+   			t_file
+   		WHERE
+   			idx = #{idx}
+   			AND board_idx = ${boardIdx}
+   			AND deleted_yn = 'N'
+   ]]>
+   </select>
+
+</mapper>

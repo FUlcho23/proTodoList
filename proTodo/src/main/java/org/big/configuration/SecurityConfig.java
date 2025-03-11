@@ -28,4 +28,12 @@ public class SecurityConfig {
  public HttpFirewall defaultHttpFirewall() {
     return new DefaultHttpFirewall();
  }
+ @Bean
+ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+     return http
+         .headers(headers -> headers
+             .contentSecurityPolicy(csp -> csp.policyDirectives("style-src 'self' 'unsafe-inline'"))
+         )
+         .build();
+ }
 }

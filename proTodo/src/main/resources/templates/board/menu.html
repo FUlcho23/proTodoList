@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu</title>
+    <style>
+    	.navbar {
+    		display: flex;
+    		justify-content: space-between; 
+    		padding: 10px 120px;
+    		background-color: #333;
+    	}
+    	.navbar .left, .navbar .center, .navbar .right {
+    		display: flex;
+    		gap: 20px; 
+    	}
+    	.navbar a {
+    		color: white;
+    		text-decoration: none;
+    		padding: 10px;
+    	}
+    	.navbar a:hover {
+    		background-color: #555;
+    	}
+	</style>
+</head>
+<body>
+        <div class="navbar" th:fragment="menu">
+   			<div class="left">
+      		<a href="/main">홈</a>
+   			 </div>
+    		<div class="center">
+      			<a href="/main/todo">Todo</a>
+     			 <a href="/main/team">팀</a>
+      			<a href="/main/board">게시판</a>
+      			<a href="/main/mypage">마이페이지</a>
+    		</div>
+    		<div class="right">
+      			<a href="#">로그인</a>
+    		</div>
+  		</div>
+   
+</body>
+</html>

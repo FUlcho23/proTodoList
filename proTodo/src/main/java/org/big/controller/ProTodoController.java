@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class ProTodoController {
+<<<<<<< HEAD
 	@RequestMapping("/main/todo")
 	 public String todo()throws Exception{
 		return "board/test.html";
@@ -27,5 +28,10 @@ public class ProTodoController {
 	@RequestMapping("/main/mypage")
 	 public String mypage()throws Exception{
 		return "board/mypage.html";
+=======
+	@RequestMapping("/")
+	 public String hello()throws Exception{
+		return "board/test.html";
+>>>>>>> refs/remotes/origin/master
 	}
 }

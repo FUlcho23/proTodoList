@@ -28,6 +28,7 @@ public class SecurityConfig {
  public HttpFirewall defaultHttpFirewall() {
     return new DefaultHttpFirewall();
  }
+<<<<<<< HEAD
  @Bean
  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
      return http
@@ -36,4 +37,6 @@ public class SecurityConfig {
          )
          .build();
  }
+=======
+>>>>>>> refs/remotes/origin/master
 }

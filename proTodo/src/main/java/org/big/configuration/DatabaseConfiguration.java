@@ -60,6 +60,7 @@ public class DatabaseConfiguration {
 	public org.apache.ibatis.session.Configuration mybatisConfig() {
 		return new org.apache.ibatis.session.Configuration();
 	}//Configuration이 두종류라 냅다 불러오니까 다른애가 와서 직접 지정..
+	//이게 그거다. 마이바티스 관련 설정을 가져와서 자바 클래스로 변환(프로퍼티스에서)
 	
 	@Bean
 	public PlatformTransactionManager transactionManager() throws Exception{

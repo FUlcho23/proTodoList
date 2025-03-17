@@ -14,6 +14,6 @@ public interface proTodoMapper {
    List<BoardDto> selectBoardList() throws Exception;
    MemberDto loginFindMember(@Param("memberId") String memberId);
    void memberAdd(MemberDto member) throws Exception;
-   
-
+   MemberDto selectMemberbyId(@Param("memberId") String memberId);
+   public void updateMember(MemberDto member) throws Exception;
 }

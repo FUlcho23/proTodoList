@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -63,8 +64,32 @@ public class ProTodoController {
 		return "board/team.html";
 	}
 	@RequestMapping("/main/mypage")
-	 public String mypage()throws Exception{
-		return "board/mypage.html";
+	 public ModelAndView mypage(HttpSession session)throws Exception{
+		ModelAndView mv = new ModelAndView("board/mypage.html");
+		// 세션에서 사용자 ID 가져오기
+	    String memberId = (String) session.getAttribute("memberId");
+
+	    if (memberId == null) {
+	        // 세션에 userId가 없을 경우 로그인 페이지로 리다이렉트
+	        mv.setViewName("redirect:/main/login");
+	        return mv;
+	    }
+	    
+	    // userId를 기준으로 데이터 조회
+	    MemberDto member = ProTodoService.selectMemberById(memberId);
+	    mv.addObject("member", member);
+		
+		return mv;
+	}
+	@RequestMapping("/main/mypage/updatemember")
+	 public String updatemember(@ModelAttribute MemberDto member,HttpSession session)throws Exception{
+		//세션에서 id가져오기
+		String memberId = (String) session.getAttribute("memberId");
+		
+		member.setMemberId(memberId);
+		ProTodoService.updateMember(member);
+		
+		return "redirect:/main/mypage";
 	}
 	@RequestMapping("/main/login")
 	 public String login(@RequestParam(value = "error", required = false) String error, Model model) {

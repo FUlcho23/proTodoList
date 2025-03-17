@@ -49,5 +49,33 @@
            )
         ]]>
    </insert>
+   <select id="selectMemberbyId" resultType="org.big.dto.MemberDto">
+   		<![CDATA[
+           SELECT
+              member_id,
+              m_password,
+              m_name,
+              m_phone,
+              m_email
+           FROM
+              pro_member
+           WHERE
+           	 member_id = #{memberId}
+        ]]>
+   </select>
+   <update id="updateMember" parameterType="org.big.dto.MemberDto">
+      <![CDATA[
+         UPDATE
+            pro_member
+         SET
+            member_id = #{memberId},
+            m_password = #{mPassword},
+            m_name = #{mName},
+            m_phone = #{mPhone},
+            m_email = #{mEmail}
+         WHERE
+            member_id = #{memberId}
+      ]]>
+   </update>
 
 </mapper>

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.big.dto.BoardDto;
 import org.big.dto.MemberDto;
+import org.big.dto.TeamDto;
 import org.big.mapper.proTodoMapper;
 import org.big.service.ProTodoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,7 @@ public class ProTodoController {
 		 
 	    return "board/main.html";
 	}
+	//====================================================================board
 	@RequestMapping("/main/board")
 	 public ModelAndView board()throws Exception{
 		ModelAndView mv = new ModelAndView("board/boardList.html");
@@ -51,29 +53,99 @@ public class ProTodoController {
 		return mv;
 	}
 	@RequestMapping("/main/board/detail")
-	 public String detail()throws Exception{
-		return "board/boardDetail.html";
+	public ModelAndView detail(@RequestParam("bNum") int bNum)throws Exception{
+		ModelAndView mv = new ModelAndView("board/boardDetail.html");
+		
+		BoardDto board = ProTodoService.selectBoardDetail(bNum);
+		mv.addObject("board", board);
+				
+		return mv;
 	}
+	@RequestMapping("/main/board/update")
+	   public String updateBoard(BoardDto board) throws Exception {
+	      ProTodoService.updateBoard(board);
+	      return "redirect:/main/board";
+	   }
+	   
+	   @RequestMapping("/main/board/delete")
+	   public String deleteBoard(@RequestParam("bNum") int bNum) throws Exception {
+		   ProTodoService.deleteBoard(bNum);
+	      return "redirect:/main/board";
+	   }
+	
 	@RequestMapping("/main/board/write")
 	 public String write()throws Exception{
 		return "board/boardWrite.html";
 	}
-	
-	@RequestMapping("/main/team")
-	 public String team()throws Exception{
-		return "board/team.html";
+	@PostMapping("/main/board/write")
+	public String addboard(BoardDto board, HttpSession session) throws Exception{
+		String memberId = (String) session.getAttribute("memberId");
+		board.setMemberId(memberId);
+		ProTodoService.addBoard(board);
+		return "redirect:/main/board";
 	}
+	
+	//====================================================================team
+	@RequestMapping("/main/team")
+	 public String team(HttpSession session, Model model)throws Exception{
+		// 현재 로그인된 사용자 ID 가져오기 (세션 사용)
+        String memberId = (String) session.getAttribute("memberId");
+
+        // 팀 정보 가져오기
+        List<TeamDto> teamList = ProTodoService.getTeamInfo(memberId);
+
+        // 팀이 존재하는지 여부 확인
+        boolean hasTeam = !teamList.isEmpty();
+        boolean isLeader = hasTeam && teamList.stream()
+                .anyMatch(team -> team.getMemberId().equals(memberId) && team.getIsLeader() == 1);
+
+        // 모델에 데이터 추가
+        model.addAttribute("memberId", memberId);
+        model.addAttribute("hasTeam", hasTeam);
+        model.addAttribute("isLeader", isLeader);
+        model.addAttribute("teamList", teamList);
+
+        return "board/team.html"; // Thymeleaf 템플릿 (team.html)
+	}
+	@RequestMapping("/main/team/addteam")
+	public String teamadd(HttpSession session, TeamDto team)throws Exception{
+		String memberId = (String) session.getAttribute("memberId");
+		team.setMemberId(memberId);
+		ProTodoService.addTeam(team);
+		return "redirect:/main/team";
+	}
+	@RequestMapping("/main/team/deletebyid")
+	public String teamdeletebyid(HttpSession session)throws Exception{
+		String memberId = (String) session.getAttribute("memberId");
+		ProTodoService.deleteTeambyId(memberId);
+		return "redirect:/main/team";
+	}
+	@RequestMapping("/main/team/deletebytname")
+	public String teamdeletebytname(@RequestParam("tName") String tName)throws Exception{
+		ProTodoService.deleteTeambyTeamName(tName);
+		return "redirect:/main/team";
+	}
+	@RequestMapping("/main/team/teamset")
+	public String teamset(Model model, HttpSession session)throws Exception{
+		String memberId = (String) session.getAttribute("memberId");
+		List<TeamDto> teamList = ProTodoService.selectTeamSet(memberId);
+		// Thymeleaf에서 사용할 데이터 추가
+		model.addAttribute("memberId", memberId);
+		model.addAttribute("teamList", teamList); 
+		return "board/teamSet.html";
+	}
+	@RequestMapping("/main/team/teamset/addTeamMember")
+	public String addteammember(TeamDto team)throws Exception{
+		ProTodoService.addTeamMember(team);
+		return "redirect:/main/team/teamset";
+	}
+	
+	//====================================================================mypage
 	@RequestMapping("/main/mypage")
 	 public ModelAndView mypage(HttpSession session)throws Exception{
 		ModelAndView mv = new ModelAndView("board/mypage.html");
 		// 세션에서 사용자 ID 가져오기
 	    String memberId = (String) session.getAttribute("memberId");
-
-	    if (memberId == null) {
-	        // 세션에 userId가 없을 경우 로그인 페이지로 리다이렉트
-	        mv.setViewName("redirect:/main/login");
-	        return mv;
-	    }
 	    
 	    // userId를 기준으로 데이터 조회
 	    MemberDto member = ProTodoService.selectMemberById(memberId);
@@ -127,7 +199,7 @@ public class ProTodoController {
 	}
 	@PostMapping("/login/memberadd")
 	public String memberadd(MemberDto member) throws Exception{
-		ProTodoService.memberAdd(member);
+		ProTodoService.addMember(member);
 		return "redirect:/main/login";
 	}
 }

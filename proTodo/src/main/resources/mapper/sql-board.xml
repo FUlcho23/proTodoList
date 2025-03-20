@@ -17,6 +17,57 @@
            ORDER BY b_num DESC
         ]]>
    </select>
+   <insert id="addBoard" parameterType="org.big.dto.BoardDto">
+        <![CDATA[
+           INSERT INTO pro_board
+           (
+           	  member_id,
+              b_subject,
+              b_content,
+              b_regist_day
+           )
+           VALUES
+           (
+              #{memberId},
+              #{bSubject},
+              #{bContent},
+              sysdate
+           )
+        ]]>
+   </insert>
+   <select id="selectBoardDetail" resultType="org.big.dto.BoardDto" parameterType="int">
+      <![CDATA[
+         SELECT
+            b_num,
+            b_subject,
+            b_content,
+            b_hit,
+            b_regist_day,
+            member_id
+         FROM
+            pro_board
+         WHERE
+            b_num=#{bNum}
+      ]]>
+   </select>
+   <update id="updateBoard" parameterType="org.big.dto.BoardDto">
+      <![CDATA[
+         UPDATE
+               pro_board
+            SET
+               b_subject = #{bSubject},
+               b_content = #{bContent}
+            WHERE
+               b_num = #{bNum}
+      ]]>
+   </update>
+
+   <update id="deleteBoard" parameterType="int">
+      <![CDATA[
+         DELETE FROM pro_board
+           WHERE b_num = #{bNum}
+      ]]>
+   </update>
    
    <select id="loginFindMember" resultType="org.big.dto.MemberDto">
    		<![CDATA[
@@ -27,7 +78,7 @@
    		]]>
    </select>
    
-   <insert id="memberAdd" parameterType="org.big.dto.MemberDto">
+   <insert id="addMember" parameterType="org.big.dto.MemberDto">
         <![CDATA[
            INSERT INTO pro_member
            (
@@ -75,6 +126,82 @@
             m_email = #{mEmail}
          WHERE
             member_id = #{memberId}
+      ]]>
+   </update>
+   
+   <select id="selectTeam" resultType="org.big.dto.TeamDto">
+   		<![CDATA[
+          SELECT 
+			    t.t_id, 
+			    t.t_name, 
+			    t.member_id, 
+			    t.t_role, 
+			    m.m_name,
+			    (CASE WHEN t.t_id IS NOT NULL THEN 1 ELSE 0 END) AS hasTeam,
+			    (CASE WHEN t.member_id = #{memberId} AND t.t_role = '팀장' THEN 1 ELSE 0 END) AS isLeader
+			FROM 
+			    pro_team t
+			JOIN 
+			    pro_member m ON t.member_id = m.member_id
+			WHERE 
+			    t.t_name = (SELECT t_name FROM pro_team WHERE member_id = #{memberId})
+        ]]>
+   </select>
+   <select id="selectTeamSet" resultType="org.big.dto.TeamDto">
+   		<![CDATA[
+          SELECT 
+    		t_name,
+    		member_id,
+    		t_role
+          FROM 
+    		pro_team
+          WHERE 
+          	t_name = (SELECT t_name FROM pro_team WHERE member_id = #{memberId})
+        ]]>
+   </select>
+   
+   <insert id="addTeam" parameterType="org.big.dto.TeamDto">
+        <![CDATA[
+           INSERT INTO pro_team
+           (
+           	  t_name,
+              member_id,
+              t_role
+           )
+           VALUES
+           (
+              #{tName},
+              #{memberId},
+              '팀장'
+           )
+        ]]>
+   </insert>
+   <insert id="addTeamMember" parameterType="org.big.dto.TeamDto">
+        <![CDATA[
+           INSERT INTO pro_team
+           (
+           	  t_name,
+              member_id,
+              t_role
+           )
+           VALUES
+           (
+              #{tName},
+              #{memberId},
+              #{tRole}
+           )
+        ]]>
+   </insert>
+   <update id="deleteTeambyId" parameterType="String">
+      <![CDATA[
+         DELETE FROM pro_team
+           WHERE member_id = #{memberId}
+      ]]>
+   </update>
+   <update id="deleteTeambyTeamName" parameterType="String">
+      <![CDATA[
+         DELETE FROM pro_team
+           WHERE t_name = #{tName}
       ]]>
    </update>
 

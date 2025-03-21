@@ -10,7 +10,6 @@ import org.big.dto.TeamDto;
 @Mapper
 public interface proTodoMapper {
 
-
    List<String> getFilePathsByBoardIdx(int boardIdx);
    List<BoardDto> selectBoardList() throws Exception;
    MemberDto loginFindMember(@Param("memberId") String memberId);
@@ -27,4 +26,5 @@ public interface proTodoMapper {
    void deleteTeambyTeamName(String tName) throws Exception;
    void addTeamMember(TeamDto team) throws Exception;
    List<TeamDto> selectTeamSet(String memberId);
+   
 }

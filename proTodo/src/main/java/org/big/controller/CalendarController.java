@@ -24,24 +24,24 @@ public class CalendarController {
 	private CalendarService calendarService;
 	
 	//달력 일정 조회
-	@RequestMapping("/calendarList")
+	@RequestMapping("/selectTodo")
     public List<TodoDto> calendarList() throws Exception{
         List<TodoDto> todo = calendarService.selectTodo();
         return todo;
     }
 	
 	//달력 일정 추가
-	@PostMapping("/calendarSave")
+	@PostMapping("/addTodo")
     public TodoDto calendarSave(@RequestBody Map<String, Object> map) throws Exception {
 
 		TodoDto todo = new TodoDto();
-		todo.setTdTodo((String) map.get("title"));
+		todo.setTdTodo((String) map.get("tdTodo"));
 
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
 		// UTC 시간을 Instant로 변환
-		Instant startInstant = Instant.parse((String) map.get("start"));
-		Instant endInstant = map.get("end") != null ? Instant.parse((String) map.get("end")) : null;
+		Instant startInstant = Instant.parse((String) map.get("tdStart"));
+		Instant endInstant = map.get("tdEnd") != null ? Instant.parse((String) map.get("tdEnd")) : null;
 
 		// Instant를 한국 시간대로 변환 (ZoneId.of("Asia/Seoul"))
 		LocalDateTime startLocal = LocalDateTime.ofInstant(startInstant, ZoneId.of("Asia/Seoul"));
@@ -51,7 +51,7 @@ public class CalendarController {
 		DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 		todo.setTdStart(startLocal);
 		todo.setTdEnd(endLocal);
-		todo.setTdAllday(map.get("allDay") != null ? ((Number) map.get("allDay")).intValue() : 0);
+		todo.setTdAllday(map.get("tdAllday") != null ? ((Number) map.get("tdAllday")).intValue() : 0);
 
         // 저장한 일정의 key 값을 포함한 데이터를 다시 반환
         calendarService.addTodo(todo);
@@ -60,7 +60,7 @@ public class CalendarController {
     }
 	
 	//캘린터 일정 삭제
-	@DeleteMapping("/calendarDelete")
+	@DeleteMapping("/deleteTodo")
     public String calendarDelete(@RequestParam String no) throws Exception{
         try{
             calendarService.deleteTodo(no);
@@ -72,7 +72,7 @@ public class CalendarController {
     }
 	
 	//캘린더 일정 수정
-	@PutMapping("/eventUpdate/{no}")
+	@PutMapping("/updateTodo/{tdId}")
     public String eventUpdate(@PathVariable int tdId, @RequestBody Map<String, Object> map){
 
 		TodoDto todo = new TodoDto();

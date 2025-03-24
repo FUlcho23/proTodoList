@@ -204,5 +204,49 @@
            WHERE t_name = #{tName}
       ]]>
    </update>
+   
+    <!-- 일정 조회하기 -->
+    <select id="selectTodo" resultType="org.big.dto.TodoDto">
+        SELECT
+            td_id,
+            td_todo,
+            td_start,
+            td_end,
+            td_allday
+        FROM todo_list
+    </select>
+
+    <!-- 일정 저장하기 -->
+    <insert id="addTodo" parameterType="org.big.dto.TodoDto" useGeneratedKeys="true" >
+        INSERT INTO todo_list(
+            td_todo,
+            td_start,
+            td_end,
+            td_allday
+        ) values (
+                  #{tdTodo},
+                  #{tdStart},
+                  #{tdEnd},
+                  #{tdAllday}
+       )
+    </insert>
+
+    <!-- 일정 삭제하기 -->
+    <delete id="deleteTodo">
+        DELETE FROM todo_list 
+        WHERE td_id = #{tdId}
+    </delete>
+
+
+    <!-- 일정 수정하기 -->
+    <update id="updateTodo" parameterType="org.big.dto.TodoDto">
+        UPDATE todo_list 
+        SET
+            td_todo = #{tdTodo} ,
+            td_start = #{tdStart},
+            td_end = #{tdEnd},
+            td_allday = #{tdAllday}
+        WHERE td_id = #{tdId}
+    </update>
 
 </mapper>

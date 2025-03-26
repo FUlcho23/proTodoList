@@ -10,25 +10,32 @@ import org.big.dto.TodoDto;
 import org.big.service.CalendarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+import jakarta.servlet.http.HttpSession;
+
+@RestController
 public class CalendarController {
 	@Autowired
 	private CalendarService calendarService;
 	
-	//달력 일정 조회
-	@RequestMapping("/selectTodo")
-    public List<TodoDto> calendarList() throws Exception{
-        List<TodoDto> todo = calendarService.selectTodo();
-        return todo;
-    }
+	
+	//달력 일정 조회 
+	@RequestMapping("/main/todoData")
+	@ResponseBody
+	public List<TodoDto> getTodoData() throws Exception {
+	    return calendarService.selectTodo();
+	}
 	
 	//달력 일정 추가
 	@PostMapping("/addTodo")
@@ -61,9 +68,9 @@ public class CalendarController {
 	
 	//캘린터 일정 삭제
 	@DeleteMapping("/deleteTodo")
-    public String calendarDelete(@RequestParam String no) throws Exception{
+    public String calendarDelete(@RequestParam String tdId) throws Exception{
         try{
-            calendarService.deleteTodo(no);
+            calendarService.deleteTodo(tdId);
             return "success";
         }catch (Exception e){
             e.printStackTrace();
@@ -77,16 +84,14 @@ public class CalendarController {
 
 		TodoDto todo = new TodoDto();
 		todo.setTdId(tdId);
-		todo.setTdTodo((String) map.get("TdTodo"));
-		
-		 DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+		todo.setTdTodo((String) map.get("tdTodo"));
 
 		// UTC 시간을 Instant로 변환
-		Instant startInstant = Instant.parse((String) map.get("start"));
+		 Instant startInstant = map.get("tdStart") != null ? Instant.parse((String) map.get("tdStart")) : null;
 		Instant endInstant = map.get("end") != null ? Instant.parse((String) map.get("end")) : null;
 
 		// Instant를 한국 시간대로 변환
-		LocalDateTime startLocal = LocalDateTime.ofInstant(startInstant, ZoneId.of("Asia/Seoul"));
+		LocalDateTime startLocal = startInstant != null ? LocalDateTime.ofInstant(startInstant, ZoneId.of("Asia/Seoul")) : null;
 		LocalDateTime endLocal = endInstant != null ? LocalDateTime.ofInstant(endInstant, ZoneId.of("Asia/Seoul")) : null;
 
 		// 변환된 LocalDateTime을 TodoDto에 저장
@@ -97,10 +102,10 @@ public class CalendarController {
 
         try {
             calendarService.updateTodo(todo);
-            return "success";
+            return "System.out.println(success)";
         } catch (Exception e) {
             e.printStackTrace();
-            return "fail";
+            return "System.out.println(false)";
         }
     }
 	

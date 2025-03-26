@@ -54,29 +54,29 @@
                 select: function (arg) {         
                     let title = prompt('일정 입력');
                     if (title) {
-                        let newData = {
-                            tdTodo: tdTodo,
-                            tdStart: arg.tdStart,
-                            tdEnd: arg.tdEnd,
-                            tdAllday: arg.tdAllday
-                        };
+                       let newData = {
+				            tdTodo: title, // 기존 오류 수정
+				            tdStart: arg.startStr, // FullCalendar에서는 startStr 사용
+				            tdEnd: arg.endStr,  // FullCalendar에서는 endStr 사용
+				            tdAllday: arg.allDay ? 1 : 0 // Boolean 값을 int로 변환
+				        };
 
                         $.ajax({
-                            url: "/calendarSave",
+                            url: "/addTodo",
                             method: "POST",
                             dataType: "json",
                             data: JSON.stringify(newData),
                             contentType: 'application/json',
                             success:function (data){
                                 if(data != null){
-                                    calendar.addEvent({
-                                        id: data.calendarNo,
-                                        title: data.title,
-                                        start: data.start1,
-                                        end: data.end,
-                                        allDay: data.allDay,
-                                        editable: true
-                                    });
+				                    calendar.addEvent({
+				                        id: data.tdId,  // 이벤트 ID 설정
+				                        title: data.tdTodo, // 일정 제목 설정
+				                        start: data.tdStart,
+				                        end: data.tdEnd,
+				                        allDay: data.tdAllday == 1,
+				                        editable: true
+				                    });
                                 }
                             }
                         });
@@ -87,8 +87,8 @@
                     if (confirm("선택한 일정을 삭제하시겠습니까?")) {
                         $.ajax({
                             type: "DELETE",
-                            url: "/calendarDelete",
-                            data: {"no" : arg.event.id},
+                            url: "/deleteTodo",
+                            data: {"tdId" : arg.event.tdId},
                             success: function (data) {
                                 if (data == "success") {
                                     alert("삭제하였습니다.");
@@ -104,9 +104,9 @@
                     let event = {
                         id: arg.event.id,
                         title: arg.event.title,
-                        start1: arg.event._instance.range.start,
+                        start: arg.event._instance.range.start,
                         end: arg.event._instance.range.end ? arg.event._instance.range.end : null,
-                        allDay: arg.event.allDay
+                        allDay: arg.event.allDay? 1 : 0
                     };
                     $.ajax({
                         url: '/updateTodo/' + arg.event.id,
@@ -119,9 +119,9 @@
                     let event = {
                         id: arg.event.id,
                         title: arg.event.title,
-                        start1: arg.event._instance.range.start,
+                        start: arg.event._instance.range.start,
                         end: arg.event._instance.range.end ? arg.event._instance.range.end : null,
-                        allDay: arg.event.allDay
+                        allDay: arg.event.allDay? 1 : 0
                     };
                     $.ajax({
                         url: '/updateTodo/' + arg.event.id,
@@ -130,32 +130,32 @@
                         data: JSON.stringify(event)
                     });
                 },
-                events: function(fetchInfo, successCallback, failureCallback) {
-                    $.ajax({
-                        type: "GET",
-                        url: "/selectTodo",
-                        success: function (data) {
-                            let events = [];
-                            if (data != null) {
-                                for (let i = 0; i < data.length; i++) {
-                                    events.push({
-                                        id: data[i].calendarNo,
-                                        title: data[i].title,
-                                        start: data[i].start1,
-                                        end: data[i].end,
-                                        allDay: data[i].allDay,
-                                        editable: true
-                                    });
-                                }
-                            }
-                            successCallback(events);
-                        },
-                        error: function() {
-                            failureCallback();
-                        }
-                    });
-                }
-            });
+                // 이벤트
+		        events: [
+		            $.ajax({
+		                type: "get",
+		                url: "/main/todoData",
+		                success: function (data) {
+		                 console.log("불러온 일정 데이터:", data); // ✅ data 사용
+		                    if (data != null) {
+		                        for (let i = 0; i < data.length; i++) {
+		                            calendar.addEvent({
+		                                id: data[i].tdId,
+		                                title: data[i].tdTodo,
+		                                start: data[i].tdStart,
+		                                end: data[i].tdEnd,
+		                                allDay: data[i].tdAllday,
+		                                editable: true                 // default : false 이벤트 드래그 등의 편집여부를 설정함
+		                            })
+		                        }
+		                    }
+		                },
+						error: function(xhr, status, error) {
+				        console.log("AJAX 요청 실패:", status, error);  // 실패 시 에러 메시지 출력
+				        }
+		            })
+		        ]
+		    });
 
             // 캘린더 렌더링
             calendar.render();

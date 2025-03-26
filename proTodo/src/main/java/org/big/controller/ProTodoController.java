@@ -31,11 +31,11 @@ public class ProTodoController {
 	@Autowired
 	private proTodoMapper todoMapper;
 
-	@RequestMapping("/main/todo")
-	 public String todo(HttpSession session)throws Exception{
-		
-		return "board/todo.html";
-	}
+	
+	  @RequestMapping("/main/todo") public String todo(HttpSession session)throws Exception{
+		  return "board/todo.html"; 
+		  }
+	 
 	
 	@RequestMapping("/home")
 	 public String main(HttpSession session)throws Exception{

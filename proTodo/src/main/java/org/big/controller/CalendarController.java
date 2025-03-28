@@ -39,27 +39,38 @@ public class CalendarController {
 	
 	//달력 일정 추가
 	@PostMapping("/addTodo")
-    public TodoDto calendarSave(@RequestBody Map<String, Object> map) throws Exception {
+    public TodoDto calendarSave(@RequestBody Map<String, Object> map, HttpSession session) throws Exception {
+		String memberId = (String) session.getAttribute("memberId");
 
-		TodoDto todo = new TodoDto();
-		todo.setTdTodo((String) map.get("tdTodo"));
+        TodoDto todo = new TodoDto();
+        todo.setMemberId(memberId);
+        todo.setTdWorkM(memberId);
+        todo.setTdTodo((String) map.get("tdTodo"));
 
-		DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+        // UTC 시간을 LocalDateTime으로 변환
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+     // 날짜 변환 (ISO 형식을 오라클 형식으로 변환)
+        // tdStart 변환
+        if (map.get("tdStart") != null) {
+            String startDate = map.get("tdStart").toString().replace("T", " ");
+            if (startDate.length() < 19) {
+                // 시간이 없으면 "00:00:00" 추가
+                startDate = startDate + " 00:00:00".substring(startDate.length() - 10);
+            }
+            todo.setTdStart(LocalDateTime.parse(startDate, formatter));
+        }
 
-		// UTC 시간을 Instant로 변환
-		Instant startInstant = Instant.parse((String) map.get("tdStart"));
-		Instant endInstant = map.get("tdEnd") != null ? Instant.parse((String) map.get("tdEnd")) : null;
-
-		// Instant를 한국 시간대로 변환 (ZoneId.of("Asia/Seoul"))
-		LocalDateTime startLocal = LocalDateTime.ofInstant(startInstant, ZoneId.of("Asia/Seoul"));
-		LocalDateTime endLocal = endInstant != null ? LocalDateTime.ofInstant(endInstant, ZoneId.of("Asia/Seoul")) : null;
-
-		// 최종적으로 한국 시간 형식으로 저장
-		DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-		todo.setTdStart(startLocal);
-		todo.setTdEnd(endLocal);
-		todo.setTdAllday(map.get("tdAllday") != null ? ((Number) map.get("tdAllday")).intValue() : 0);
-
+        // tdEnd 변환
+        if (map.get("tdEnd") != null) {
+            String endDate = map.get("tdEnd").toString().replace("T", " ");
+            if (endDate.length() < 19) {
+                // 시간이 없으면 "00:00:00" 추가
+                endDate = endDate + " 00:00:00".substring(endDate.length() - 10);
+            }
+            todo.setTdEnd(LocalDateTime.parse(endDate, formatter));
+        }
+        todo.setTdAllday(map.get("tdAllDay")!= null ? ((Number) map.get("tdAllDay")).intValue() : 0);
+        
         // 저장한 일정의 key 값을 포함한 데이터를 다시 반환
         calendarService.addTodo(todo);
 
@@ -78,34 +89,32 @@ public class CalendarController {
         }
     }
 	
-	//캘린더 일정 수정
 	@PutMapping("/updateTodo/{tdId}")
     public String eventUpdate(@PathVariable int tdId, @RequestBody Map<String, Object> map){
 
-		TodoDto todo = new TodoDto();
-		todo.setTdId(tdId);
-		todo.setTdTodo((String) map.get("tdTodo"));
-
-		// UTC 시간을 Instant로 변환
-		 Instant startInstant = map.get("tdStart") != null ? Instant.parse((String) map.get("tdStart")) : null;
-		Instant endInstant = map.get("end") != null ? Instant.parse((String) map.get("end")) : null;
-
-		// Instant를 한국 시간대로 변환
-		LocalDateTime startLocal = startInstant != null ? LocalDateTime.ofInstant(startInstant, ZoneId.of("Asia/Seoul")) : null;
-		LocalDateTime endLocal = endInstant != null ? LocalDateTime.ofInstant(endInstant, ZoneId.of("Asia/Seoul")) : null;
-
-		// 변환된 LocalDateTime을 TodoDto에 저장
-		todo.setTdStart(startLocal);
-		todo.setTdEnd(endLocal);
-		
-        todo.setTdAllday(map.get("allDay")!= null ? ((Number) map.get("allDay")).intValue() : 0);
+        TodoDto todo = new TodoDto();
+        todo.setTdId(tdId);
+        todo.setTdTodo((String) map.get("tdTodo"));
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        
+        // 날짜 변환 (ISO 형식을 오라클 형식으로 변환)
+        if (map.get("tdStart") != null) {
+            String startDate = map.get("tdStart").toString().replace("T", " ").substring(0, 19);  
+            todo.setTdStart(LocalDateTime.parse(startDate, formatter));
+        }
+        if (map.get("tdEnd") != null) {
+            String endDate = map.get("tdEnd").toString().replace("T", " ").substring(0, 19);
+            todo.setTdEnd(LocalDateTime.parse(endDate, formatter));
+        }
+       todo.setTdAllday(map.get("tdAllDay")!= null ? ((Number) map.get("tdAllDay")).intValue() : 0);
 
         try {
             calendarService.updateTodo(todo);
-            return "System.out.println(success)";
+            return "success";
         } catch (Exception e) {
             e.printStackTrace();
-            return "System.out.println(false)";
+            return "fail";
         }
     }
 	

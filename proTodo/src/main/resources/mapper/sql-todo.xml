@@ -20,11 +20,15 @@
     <!-- 일정 저장하기 -->
     <insert id="addTodo" parameterType="org.big.dto.TodoDto" useGeneratedKeys="true" >
         INSERT INTO todo_list(
+	        member_id,
+	        td_work_m,
             td_todo,
-            TO_CHAR(CALENDAR_START, 'YYYY-MM-DD"T"HH24:MI:SS') AS td_start,
-            TO_CHAR(CALENDAR_START, 'YYYY-MM-DD"T"HH24:MI:SS') AS td_end,
+            td_start,
+	        td_end,
             td_allday
         ) values (
+        		  #{memberId},
+        		  #{tdWorkM},
                   #{tdTodo},
                   #{tdStart},
                   #{tdEnd},
@@ -44,8 +48,8 @@
         UPDATE todo_list 
         SET
             td_todo = #{tdTodo} ,
-            td_start = TO_DATE(#{tdStart}, 'YYYY-MM-DD"T"HH24:MI:SS'),
-            td_end = TO_DATE(#{tdEnd}, 'YYYY-MM-DD"T"HH24:MI:SS'),
+            td_start = #{tdStart},
+            td_end = #{tdEnd},
             td_allday = #{tdAllday}
         WHERE td_id = #{tdId}
     </update>

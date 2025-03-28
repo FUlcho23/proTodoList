@@ -22,19 +22,17 @@ public class CalendarServiceImpl implements CalendarService{
 
 	@Override
 	public void addTodo(TodoDto todo) throws Exception {
-		// TODO Auto-generated method stu
-		
+		calenderMapper.addTodo(todo);
 	}
 
 	@Override
 	public void deleteTodo(String tdId) throws Exception {
-		// TODO Auto-generated method stub
-		
+		calenderMapper.deleteTodo(tdId);
 	}
 
 	@Override
 	public void updateTodo(TodoDto todo) throws Exception {
-		// TODO Auto-generated method stub
+		calenderMapper.updateTodo(todo);
 		
 	}
 

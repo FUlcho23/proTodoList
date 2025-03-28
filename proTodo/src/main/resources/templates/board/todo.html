@@ -70,11 +70,11 @@
                             success:function (data){
                                 if(data != null){
 				                    calendar.addEvent({
-				                        id: data.tdId,  // 이벤트 ID 설정
-				                        title: data.tdTodo, // 일정 제목 설정
-				                        start: data.tdStart,
-				                        end: data.tdEnd,
-				                        allDay: data.tdAllday == 1,
+				                        tdId: data.tdId,  // 이벤트 ID 설정
+				                        tdTodo: data.tdTodo, // 일정 제목 설정
+				                        tdStart: data.tdStart,
+				                        tdEnd: data.tdEnd,
+				                        tdAllday: data.tdAllday == 1,
 				                        editable: true
 				                    });
                                 }
@@ -88,7 +88,7 @@
                         $.ajax({
                             type: "DELETE",
                             url: "/deleteTodo",
-                            data: {"tdId" : arg.event.tdId},
+                            data: {"tdId" : arg.event.id},
                             success: function (data) {
                                 if (data == "success") {
                                     alert("삭제하였습니다.");
@@ -102,11 +102,11 @@
                 },
                 eventDrop: function(arg) {              
                     let event = {
-                        id: arg.event.id,
-                        title: arg.event.title,
-                        start: arg.event._instance.range.start,
-                        end: arg.event._instance.range.end ? arg.event._instance.range.end : null,
-                        allDay: arg.event.allDay? 1 : 0
+                        tdId: arg.event.id,
+                        tdTodo: arg.event.title,
+                        tdStart: arg.event._instance.range.start,
+                        tdEnd: arg.event._instance.range.end ? arg.event._instance.range.end : null,
+                        tdAllDay: arg.event.allDay? 1 : 0
                     };
                     $.ajax({
                         url: '/updateTodo/' + arg.event.id,
@@ -117,11 +117,11 @@
                 },
                 eventResize: function(arg) {            
                     let event = {
-                        id: arg.event.id,
-                        title: arg.event.title,
-                        start: arg.event._instance.range.start,
-                        end: arg.event._instance.range.end ? arg.event._instance.range.end : null,
-                        allDay: arg.event.allDay? 1 : 0
+                        tdId: arg.event.id,
+                        tdTodo: arg.event.title,
+                        tdStart: arg.event._instance.range.start,
+                        tdEnd: arg.event._instance.range.end ? arg.event._instance.range.end : null,
+                        tdAllDay: arg.event.allDay? 1 : 0
                     };
                     $.ajax({
                         url: '/updateTodo/' + arg.event.id,

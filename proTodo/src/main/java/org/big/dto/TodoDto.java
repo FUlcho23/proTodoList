@@ -17,7 +17,6 @@ public class TodoDto {
 	private String tdFile; //첨부파일 (선택 사항)
 	private int tdHidden;//DEFAULT 0 CHECK (td_hidden IN (0, 1)) 공개여부(기본 비공개0)
 	
-	@JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
 	private LocalDateTime tdEnd;//마감일
 	private LocalDateTime tdStart;//시작일
 	

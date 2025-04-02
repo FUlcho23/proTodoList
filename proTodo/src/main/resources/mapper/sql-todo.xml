@@ -8,12 +8,9 @@
     <select id="selectTodo" resultType="org.big.dto.TodoDto">
     	<![CDATA[
 	        SELECT
-	            td_id,
-	            td_todo,
-	            td_start,
-	            td_end,
-	            td_allday
+	            *
 	        FROM todo_list
+	        WHERE td_work_m = #{tdWorkM}
         ]]>
     </select>
 
@@ -22,6 +19,7 @@
         INSERT INTO todo_list(
 	        member_id,
 	        td_work_m,
+	        t_name,
             td_todo,
             td_start,
 	        td_end,
@@ -29,6 +27,7 @@
         ) values (
         		  #{memberId},
         		  #{tdWorkM},
+        		  #{tName},
                   #{tdTodo},
                   #{tdStart},
                   #{tdEnd},
@@ -53,4 +52,8 @@
             td_allday = #{tdAllday}
         WHERE td_id = #{tdId}
     </update>
+    <select id="getTeamName" parameterType="String" resultType="String">
+    SELECT t_name FROM pro_team WHERE member_id = #{tdWorkM}
+</select>
+    
 </mapper>

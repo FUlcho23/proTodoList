@@ -15,9 +15,9 @@ public class CalendarServiceImpl implements CalendarService{
 	
 	
 	@Override
-	public List<TodoDto> selectTodo() throws Exception {
+	public List<TodoDto> selectTodo(String tdWorkM) {
 		// TODO Auto-generated method stub
-		return calenderMapper.selectTodo();
+		return calenderMapper.selectTodo(tdWorkM);
 	}
 
 	@Override
@@ -34,6 +34,12 @@ public class CalendarServiceImpl implements CalendarService{
 	public void updateTodo(TodoDto todo) throws Exception {
 		calenderMapper.updateTodo(todo);
 		
+	}
+
+	@Override
+	public String getTeamName(String tdWorkM) throws Exception {
+		// TODO Auto-generated method stub
+		return calenderMapper.getTeamName(tdWorkM);
 	}
 
 }

@@ -42,6 +42,11 @@ public class ProTodoController {
 		 
 	    return "board/main.html";
 	}
+	@RequestMapping("/session-expired")
+	 public String main()throws Exception{
+		 
+	    return "board/sessionError.html";
+	}
 	//====================================================================board
 	@RequestMapping("/main/board")
 	 public ModelAndView board()throws Exception{

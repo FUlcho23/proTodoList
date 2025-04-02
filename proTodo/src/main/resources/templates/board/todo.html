@@ -14,6 +14,77 @@
         margin: 0 auto; /* 중앙 정렬 */
         max-width: 900px; /* 최대 너비를 900px로 설정 */
       }
+      
+      a{
+      text-decoration:none
+      }
+      /* 일요일 날짜: 빨간색 */
+		.fc-day-sun a {
+		    color: #f25278;
+		}
+		
+		/* 토요일 날짜: 파란색 */
+		.fc-day-sat a {
+		    color: #4d64ff;
+		}
+		
+		.fc-day-mon a{
+		    color: #303030;
+		}
+		
+		.fc-day-tue a{
+		    color: #303030;
+		}
+		
+		.fc-day-wed a {
+		    color: #303030;
+		}
+		.fc-day-thu a {
+		    color: #303030;
+		}
+		
+		.fc-day-fri a {
+		    color: #303030;
+		}
+		
+		.fc-button-primary {
+		    color: red;
+		}
+		.schedule-container {
+		    display: flex;
+		    width: 80%;
+		    margin: 0 auto; /* 중앙 정렬 */
+		    height: 600px;
+		    /*border: 1px solid #ddd;*/
+		}
+		
+		.schedule-section {
+		    width: 48%;
+		    padding: 10px;
+		    overflow-y: auto;
+		}
+		
+		.divider {
+		    width: 1px;
+		    background-color: #ccc;
+		    margin: 0 10px;
+		}
+		
+		.schedule-list {
+		    list-style: none;
+		    padding: 0;
+		}
+		
+		.schedule-list li {
+		    padding: 10px;
+		    margin-bottom: 5px;
+		    border-bottom: 1px solid #eee;
+		}
+		h2{
+			text-align:center;
+			font-weight:bold;
+		}
+		
     </style>
      <script>
         $(document).ready(function () {
@@ -54,12 +125,14 @@
                 select: function (arg) {         
                     let title = prompt('일정 입력');
                     if (title) {
+                     let isAllDay = arg.allDay ? 1 : 0;  // ✅ 확실하게 1 또는 0으로 변환
                        let newData = {
 				            tdTodo: title, // 기존 오류 수정
 				            tdStart: arg.startStr, // FullCalendar에서는 startStr 사용
 				            tdEnd: arg.endStr,  // FullCalendar에서는 endStr 사용
-				            tdAllday: arg.allDay ? 1 : 0 // Boolean 값을 int로 변환
+				            tdAllday: isAllDay
 				        };
+				        console.log("추가하는 일정 데이터:", newData); // 🔍 디버깅용 로그
 
                         $.ajax({
                             url: "/addTodo",
@@ -77,6 +150,8 @@
 				                        tdAllday: data.tdAllday == 1,
 				                        editable: true
 				                    });
+				                    console.log(data.tdAllday);
+									window.location.reload();  // 성공 후 페이지 새로고침
                                 }
                             }
                         });
@@ -106,7 +181,7 @@
                         tdTodo: arg.event.title,
                         tdStart: arg.event._instance.range.start,
                         tdEnd: arg.event._instance.range.end ? arg.event._instance.range.end : null,
-                        tdAllDay: arg.event.allDay? 1 : 0
+                        tdAllday: arg.event.allDay? 1 : 0
                     };
                     $.ajax({
                         url: '/updateTodo/' + arg.event.id,
@@ -121,7 +196,7 @@
                         tdTodo: arg.event.title,
                         tdStart: arg.event._instance.range.start,
                         tdEnd: arg.event._instance.range.end ? arg.event._instance.range.end : null,
-                        tdAllDay: arg.event.allDay? 1 : 0
+                        tdAllday: arg.event.allDay? 1 : 0
                     };
                     $.ajax({
                         url: '/updateTodo/' + arg.event.id,
@@ -139,13 +214,16 @@
 		                 console.log("불러온 일정 데이터:", data); // ✅ data 사용
 		                    if (data != null) {
 		                        for (let i = 0; i < data.length; i++) {
+			                        let progress = data[i].tdStatus; // 진행도 값 ('N', 'P', 'Y')
+	                				let eventColor = getEventColor(progress); // 진행도에 따른 색상 설정
 		                            calendar.addEvent({
 		                                id: data[i].tdId,
 		                                title: data[i].tdTodo,
 		                                start: data[i].tdStart,
 		                                end: data[i].tdEnd,
 		                                allDay: data[i].tdAllday,
-		                                editable: true                 // default : false 이벤트 드래그 등의 편집여부를 설정함
+		                                editable: true,// default : false 이벤트 드래그 등의 편집여부를 설정함
+		                                color: eventColor // 색상 적용
 		                            })
 		                        }
 		                    }
@@ -156,7 +234,12 @@
 		            })
 		        ]
 		    });
-
+		    
+		    function getEventColor(progress) {
+			    if (progress === 'Y') return "#28a745"; // 완료 (초록색)
+			    if (progress === 'P') return "#fd7e14"; // 수행 중 (주황색)
+			    return "#53baf5"; // 수행 안 함 (파란색)
+			}
             // 캘린더 렌더링
             calendar.render();
         });
@@ -167,6 +250,30 @@
   	<br>
     <div id='calendar'></div>
     <br>
+    <div class="schedule-container">
+    <br>
+    <!-- 팀원 일정 -->
+    
+    <div class="schedule-section">
+        <h2>팀원 일정</h2>
+        <hr>
+        <ul id="team-schedule" class="schedule-list">
+            <!-- 팀 일정이 여기에 추가됨 -->
+        </ul>
+    </div>
+
+    <!-- 가운데 구분선 -->
+    <div class="divider"></div>
+
+    <!-- 개인 일정 -->
+    <div class="schedule-section">
+        <h2>개인 일정</h2>
+        <hr>
+        <ul id="personal-schedule" class="schedule-list">
+            <!-- 개인 일정이 여기에 추가됨 -->
+        </ul>
+    </div>
+</div>
     <div th:replace="~{board/footer}"></div>
 
   </body>

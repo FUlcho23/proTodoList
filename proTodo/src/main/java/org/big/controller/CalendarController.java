@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.big.dto.TodoDto;
+import org.big.mapper.CalenderMapper;
 import org.big.service.CalendarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,8 +34,10 @@ public class CalendarController {
 	//달력 일정 조회 
 	@RequestMapping("/main/todoData")
 	@ResponseBody
-	public List<TodoDto> getTodoData() throws Exception {
-	    return calendarService.selectTodo();
+	public List<TodoDto> getTodoData(HttpSession session) throws Exception {
+		String tdWorkM = (String) session.getAttribute("memberId");
+		
+	    return calendarService.selectTodo(tdWorkM);
 	}
 	
 	//달력 일정 추가
@@ -52,28 +55,46 @@ public class CalendarController {
      // 날짜 변환 (ISO 형식을 오라클 형식으로 변환)
         // tdStart 변환
         if (map.get("tdStart") != null) {
-            String startDate = map.get("tdStart").toString().replace("T", " ");
+            String startDate = map.get("tdStart").toString();
+            
+            
             if (startDate.length() < 19) {
                 // 시간이 없으면 "00:00:00" 추가
-                startDate = startDate + " 00:00:00".substring(startDate.length() - 10);
+            	startDate = startDate + " 00:00:00".substring(startDate.length() - 10);
+                todo.setTdStart(LocalDateTime.parse(startDate, formatter));
             }
-            todo.setTdStart(LocalDateTime.parse(startDate, formatter));
+            else {
+            	// ✅ OffsetDateTime을 사용하여 변환
+	            LocalDateTime localStartDate = OffsetDateTime.parse(startDate).toLocalDateTime();
+	            todo.setTdStart(localStartDate);
+            }
         }
 
         // tdEnd 변환
         if (map.get("tdEnd") != null) {
-            String endDate = map.get("tdEnd").toString().replace("T", " ");
+            String endDate = map.get("tdEnd").toString();
+            
             if (endDate.length() < 19) {
                 // 시간이 없으면 "00:00:00" 추가
                 endDate = endDate + " 00:00:00".substring(endDate.length() - 10);
+                todo.setTdEnd(LocalDateTime.parse(endDate, formatter));
             }
-            todo.setTdEnd(LocalDateTime.parse(endDate, formatter));
+            else {
+            	LocalDateTime localEndDate = OffsetDateTime.parse(endDate).toLocalDateTime();
+                todo.setTdEnd(localEndDate);
+            }
         }
-        todo.setTdAllday(map.get("tdAllDay")!= null ? ((Number) map.get("tdAllDay")).intValue() : 0);
+        
+        System.out.println("tdAllday: " + map.get("tdAllday"));
+        
+        todo.setTdAllday(map.get("tdAllday")!= null ? ((Number) map.get("tdAllday")).intValue() : 0);
+        
+        String tName = calendarService.getTeamName(memberId);
+        todo.setTName(tName != null ? tName : ""); // NULL 방지
         
         // 저장한 일정의 key 값을 포함한 데이터를 다시 반환
         calendarService.addTodo(todo);
-
+        
         return todo;
     }
 	
@@ -107,7 +128,7 @@ public class CalendarController {
             String endDate = map.get("tdEnd").toString().replace("T", " ").substring(0, 19);
             todo.setTdEnd(LocalDateTime.parse(endDate, formatter));
         }
-       todo.setTdAllday(map.get("tdAllDay")!= null ? ((Number) map.get("tdAllDay")).intValue() : 0);
+       todo.setTdAllday(map.get("tdAllday")!= null ? ((Number) map.get("tdAllday")).intValue() : 0);
 
         try {
             calendarService.updateTodo(todo);

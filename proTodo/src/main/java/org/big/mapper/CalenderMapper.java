@@ -7,8 +7,9 @@ import org.big.dto.TodoDto;
 
 @Mapper
 public interface CalenderMapper {
-    List<TodoDto> selectTodo() throws Exception;
+    List<TodoDto> selectTodo(String tdWorkM);
     void addTodo(TodoDto todo) throws Exception;
     void deleteTodo(String tdId) throws Exception;
     void updateTodo(TodoDto todo) throws Exception;
+    String getTeamName(String tdWorkM) throws Exception;
 }

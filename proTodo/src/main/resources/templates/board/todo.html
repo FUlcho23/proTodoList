@@ -209,7 +209,7 @@
 		        events: [
 		            $.ajax({
 		                type: "get",
-		                url: "/main/todoData",
+		                url: "/todoData",
 		                success: function (data) {
 		                 console.log("불러온 일정 데이터:", data); // ✅ data 사용
 		                    if (data != null) {
@@ -256,26 +256,77 @@
     
     <div class="schedule-section">
         <h2>팀원 일정</h2>
-        <hr>
-        <ul id="team-schedule" class="schedule-list">
-            <!-- 팀 일정이 여기에 추가됨 -->
-        </ul>
+        <table class="board_list">
+         <colgroup>
+            <col width="15%"/>
+            <col width="*"/>
+            <col width="20%"/>
+            <col width="15%"/>
+         </colgroup>
+         <thead>
+            <tr>
+               <th scope="col">이름</th>
+               <th scope="col">내용</th>
+               <th scope="col">마감일</th>
+               <th scope="col">상태</th>
+            </tr>
+         </thead>
+         <tbody>
+		    <tr th:each="todo : ${todoList}">
+		        <td th:text="${todo.tdWorkM}"></td>
+		        <td class="title" th:text="${todo.tdTodo}"></td>
+		        <td th:text="${todo.tdEnd != null ? #temporals.format(todo.tdEnd, 'yyyy-MM-dd HH:mm:ss') : '-'}"></td>
+		    	<td th:text="${todo.tdStatus}"></td>
+		    </tr>
+		    <tr th:if="${#lists.isEmpty(todoList)}">
+		        <td colspan="4">아직 공유된 일정이 없습니다.</td>
+		    </tr>
+		</tbody>
+      </table>
+        
     </div>
-
+    
     <!-- 가운데 구분선 -->
     <div class="divider"></div>
 
     <!-- 개인 일정 -->
     <div class="schedule-section">
-        <h2>개인 일정</h2>
-        <hr>
-        <ul id="personal-schedule" class="schedule-list">
-            <!-- 개인 일정이 여기에 추가됨 -->
-        </ul>
+        <h2>미수행된 개인 일정</h2>
+        <form action="#" method="post">
+        <table class="board_list">
+        	<colgroup>
+	            <col width="15%"/>
+	            <col width="*"/>
+	            <col width="15%"/>
+	            <col width="15%"/>
+         	</colgroup>
+         	<thead>
+            	<tr>
+	               <th scope="col">내용</th>
+	               <th scope="col">마감일</th>
+	               <th scope="col">상태</th>
+	               <th scope="col"></th>
+            	</tr>
+         	</thead>
+         	<tbody>
+	         	<tr th:each="todo : ${todoList}" th:if="${todo.tdStatus == 'N' or todo.tdStatus == 'P'}">
+			        <td class="title" th:text="${todo.tdTodo}"></td>
+			        <td th:text="${todo.tdEnd != null ? #temporals.format(todo.tdEnd, 'yyyy-MM-dd HH:mm:ss') : '-'}"></td>
+			    	<td th:text="${todo.tdStatus}"></td>
+			    	<td> <input type="checkbox" name="todoId" th:value="${todo.tdId}"></td>
+			    </tr>
+			    <tr th:if="${#lists.isEmpty(todoList)}">
+			        <td colspan="4">아직 공유된 일정이 없습니다.</td>
+			    </tr>
+         	</tbody>
+        </table>
+        	<input type="button" value="수행중">
+         	<input type="button" value="완료">
+         	<input type="button" value="공유">
+         	<input type="button" value="공유취소">
+        </form>
     </div>
 </div>
     <div th:replace="~{board/footer}"></div>
-
   </body>
-  
 </html>

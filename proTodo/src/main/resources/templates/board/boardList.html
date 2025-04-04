@@ -20,14 +20,12 @@
       <h2>게시판 목록</h2>
       <table class="board_list">
          <colgroup>
-            <col width="15%"/>
             <col width="*"/>
             <col width="15%"/>
             <col width="20%"/>
          </colgroup>
          <thead>
             <tr>
-               <th scope="col">글번호</th>
                <th scope="col">제목</th>
                <th scope="col">조회수</th>
                <th scope="col">작성일</th>
@@ -35,7 +33,6 @@
          </thead>
          <tbody>
             <tr th:if="${#lists.size(list) > 0}" th:each="list : ${list}">
-            <td th:text="${list.bNum}"></td>
             <td class="title">
                <a href="/main/board/detail?bNum="th:attrappend="href=${list.bNum}" th:text="${list.bSubject}"></a>
             </td>

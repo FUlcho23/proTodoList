@@ -5,7 +5,10 @@ import java.util.List;
 import org.big.dto.BoardDto;
 import org.big.dto.MemberDto;
 import org.big.dto.TeamDto;
+import org.big.dto.TodoDto;
+import org.big.mapper.CalenderMapper;
 import org.big.mapper.proTodoMapper;
+import org.big.service.CalendarService;
 import org.big.service.ProTodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,12 +33,17 @@ public class ProTodoController {
 	
 	@Autowired
 	private proTodoMapper todoMapper;
-
 	
-	  @RequestMapping("/main/todo") public String todo(HttpSession session)throws Exception{
-		  return "board/todo.html"; 
-		  }
-	 
+	@Autowired
+	private CalendarService calendarService; 
+	
+	@RequestMapping("/main/todo") public String todo(HttpSession session, Model model)throws Exception{
+		String tdWorkM = (String) session.getAttribute("memberId");
+        List<TodoDto> todoList = calendarService.selectTodo(tdWorkM);
+
+        model.addAttribute("todoList", todoList);  // Thymeleaf에서 사용
+		return "board/todo.html"; 
+	}
 	
 	@RequestMapping("/home")
 	 public String main(HttpSession session)throws Exception{

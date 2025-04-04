@@ -28,11 +28,10 @@ import jakarta.servlet.http.HttpSession;
 @RestController
 public class CalendarController {
 	@Autowired
-	private CalendarService calendarService;
-	
+	private CalendarService calendarService; 
 	
 	//달력 일정 조회 
-	@RequestMapping("/main/todoData")
+	@RequestMapping("/todoData")
 	@ResponseBody
 	public List<TodoDto> getTodoData(HttpSession session) throws Exception {
 		String tdWorkM = (String) session.getAttribute("memberId");
@@ -109,7 +108,7 @@ public class CalendarController {
             return "fail";
         }
     }
-	
+	//일정 수정
 	@PutMapping("/updateTodo/{tdId}")
     public String eventUpdate(@PathVariable int tdId, @RequestBody Map<String, Object> map){
 

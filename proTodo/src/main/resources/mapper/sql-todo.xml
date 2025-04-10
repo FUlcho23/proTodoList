@@ -53,7 +53,20 @@
         WHERE td_id = #{tdId}
     </update>
     <select id="getTeamName" parameterType="String" resultType="String">
-    SELECT t_name FROM pro_team WHERE member_id = #{tdWorkM}
-</select>
+    	SELECT t_name FROM pro_team WHERE member_id = #{tdWorkM}
+	</select>
+	<update id="updateStatus" parameterType="org.big.dto.TodoDto">
+    	UPDATE todo_list
+    	SET 
+    		td_status = #{status} 
+    	WHERE td_id = #{id}
+	</update>
+	
+	<update id="updateHidden" parameterType="org.big.dto.TodoDto">
+	    UPDATE todo_list
+	    SET 
+	    	td_hidden = #{hidden}
+	    WHERE td_id = #{id}
+	</update>
     
 </mapper>

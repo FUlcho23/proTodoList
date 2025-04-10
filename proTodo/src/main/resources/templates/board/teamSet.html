@@ -24,7 +24,10 @@
 				    <tr th:each="team : ${teamList}">
 				        <td th:text="${team.memberId}"></td>
 				        <td th:text="${team.tRole}"></td>
-				        <td><input type="button" value="삭제"></td>
+				        <td>
+				        	<input type="button" value="삭제"
+				        	th:if="${team.memberId != session.memberId}">
+				        </td>
 				    </tr>
 				</tbody>
             </table>

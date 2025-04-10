@@ -77,5 +77,9 @@ public class ProTodoServiceImpl implements ProTodoService{
 	public List<TeamDto> selectTeamSet(String memberId) {
 		return proTodoMapper.selectTeamSet(memberId);
 	}
+	@Override
+	public void updateHitCount(int bNum) throws Exception {
+		proTodoMapper.updateHitCount(bNum);		
+	}
 	
 }

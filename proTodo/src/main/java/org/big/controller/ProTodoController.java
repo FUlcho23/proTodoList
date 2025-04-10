@@ -69,6 +69,7 @@ public class ProTodoController {
 	public ModelAndView detail(@RequestParam("bNum") int bNum)throws Exception{
 		ModelAndView mv = new ModelAndView("board/boardDetail.html");
 		
+		ProTodoService.updateHitCount(bNum);
 		BoardDto board = ProTodoService.selectBoardDetail(bNum);
 		mv.addObject("board", board);
 				

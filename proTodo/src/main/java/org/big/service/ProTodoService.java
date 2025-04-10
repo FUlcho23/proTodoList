@@ -22,4 +22,5 @@ public interface ProTodoService {
 	void deleteTeambyTeamName(String tName) throws Exception;
 	void addTeamMember(TeamDto team) throws Exception;
 	List<TeamDto> selectTeamSet(String memberId);
+	void updateHitCount(int bNum) throws Exception;
 }

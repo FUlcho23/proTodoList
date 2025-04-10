@@ -12,4 +12,6 @@ public interface CalenderMapper {
     void deleteTodo(String tdId) throws Exception;
     void updateTodo(TodoDto todo) throws Exception;
     String getTeamName(String tdWorkM) throws Exception;
+    void updateStatus(int id, String status);
+    void updateHidden(int id, int hidden);
 }

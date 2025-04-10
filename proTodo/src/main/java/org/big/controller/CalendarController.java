@@ -3,13 +3,17 @@ package org.big.controller;
 import java.time.Instant;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.big.dto.TodoDto;
 import org.big.mapper.CalenderMapper;
 import org.big.service.CalendarService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -137,5 +141,40 @@ public class CalendarController {
             return "fail";
         }
     }
+	
+	@PostMapping("/updateStatus")
+	@ResponseBody
+	public Map<String, Object> updateStatus(@RequestBody Map<String, Object> requestData) {
+	    try {
+	        List<Integer> ids = ((List<?>) requestData.get("ids")).stream()
+	            .map(id -> Integer.parseInt(id.toString()))
+	            .collect(Collectors.toList());
+
+	        String status = requestData.get("status").toString();
+
+	        calendarService.updateStatus(ids, status);
+
+	        return Collections.singletonMap("success", true);
+	    } catch (Exception e) {
+	        e.printStackTrace(); // 로그 확인용
+	        return Collections.singletonMap("success", false);
+	    }
+	}
+
+	@PostMapping("/updateHidden")
+	@ResponseBody
+	public Map<String, Object> updateHidden(@RequestBody Map<String, Object> payload) {
+	    List<Integer> ids = ((List<?>) payload.get("ids")).stream()
+	        .map(id -> Integer.parseInt(id.toString()))
+	        .collect(Collectors.toList());
+
+	    int hidden = (int) payload.get("hidden");
+
+	    calendarService.updateHidden(ids, hidden);
+
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("success", true);
+	    return response;
+	}
 	
 }

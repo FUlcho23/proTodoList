@@ -143,12 +143,13 @@
                             success:function (data){
                                 if(data != null){
 				                    calendar.addEvent({
-				                        tdId: data.tdId,  // 이벤트 ID 설정
-				                        tdTodo: data.tdTodo, // 일정 제목 설정
-				                        tdStart: data.tdStart,
-				                        tdEnd: data.tdEnd,
-				                        tdAllday: data.tdAllday == 1,
-				                        editable: true
+				                        id: data.tdId,  // 이벤트 ID 설정
+				                        title: data.tdTodo, // 일정 제목 설정
+				                        start: data.tdStart,
+				                        end: data.tdEnd,
+				                        allDay: data.tdAllday == 1,
+				                        editable: true,
+				                        color: getEventColor(data.tdStatus || 'N') // 색상도 적용하고 싶다면
 				                    });
 				                    console.log(data.tdAllday);
 									window.location.reload();  // 성공 후 페이지 새로고침
@@ -320,11 +321,58 @@
 			    </tr>
          	</tbody>
         </table>
-        	<input type="button" value="수행중">
-         	<input type="button" value="완료">
-         	<input type="button" value="공유">
-         	<input type="button" value="공유취소">
+        	<input type="button" value="수행 중" onclick="updateStatus('P')">
+			<input type="button" value="완료" onclick="updateStatus('Y')">
+			<input type="button" value="공유" onclick="updateHidden(1)">
+			<input type="button" value="공유 취소" onclick="updateHidden(0)">
         </form>
+        <script>
+        	function getSelectedIds() {
+			    let selected = [];
+			    document.querySelectorAll('input[name="todoId"]:checked').forEach((checkbox) => {
+			        selected.push(checkbox.value);
+			    });
+			    return selected;
+			}
+			
+			// 진행 상태 업데이트 (P, Y 변경)
+			function updateStatus(status) {
+			    let selectedIds = getSelectedIds();
+			    if (selectedIds.length === 0) {
+			        alert("일정을 선택해주세요.");
+			        return;
+			    }
+			
+			    fetch('/updateStatus', {
+			        method: 'POST',
+			        headers: { 'Content-Type': 'application/json' },
+			        body: JSON.stringify({ ids: selectedIds, status: status })
+			    }).then(response => response.json())
+			      .then(data => {
+			          if (data.success) location.reload();
+			          else alert("Status업데이트 실패");
+			      });
+			}
+			
+			// 공유 상태 업데이트 (0: 비공개, 1: 공개)
+			function updateHidden(hiddenValue) {
+			    let selectedIds = getSelectedIds();
+			    if (selectedIds.length === 0) {
+			        alert("일정을 선택해주세요.");
+			        return;
+			    }
+			
+			    fetch('/updateHidden', {
+			        method: 'POST',
+			        headers: { 'Content-Type': 'application/json' },
+			        body: JSON.stringify({ ids: selectedIds, hidden: hiddenValue })
+			    }).then(response => response.json())
+			      .then(data => {
+			          if (data.success) location.reload();
+			          else alert("Hidden업데이트 실패");
+			      });
+			}
+        </script>
     </div>
 </div>
     <div th:replace="~{board/footer}"></div>

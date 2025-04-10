@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CalendarServiceImpl implements CalendarService{
-//sql-만들어야함 파이쟈~~
+
 	@Autowired
 	private CalenderMapper calenderMapper;
 	
@@ -41,5 +41,19 @@ public class CalendarServiceImpl implements CalendarService{
 		// TODO Auto-generated method stub
 		return calenderMapper.getTeamName(tdWorkM);
 	}
+
+	@Override
+	public void updateStatus(List<Integer> ids, String status) {
+		for (int id : ids) {
+			calenderMapper.updateStatus(id, status);
+	    }
+		
+	}
+	@Override
+	 public void updateHidden(List<Integer> ids, int hidden) {
+		for (int id : ids) {
+			calenderMapper.updateHidden(id, hidden);
+		}
+    }
 
 }

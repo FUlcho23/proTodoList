@@ -14,6 +14,16 @@
            ORDER BY b_num DESC
         ]]>
    </select>
+   <update id="updateHitCount" parameterType="int">
+      <![CDATA[
+         UPDATE
+            pro_board
+         SET
+            b_hit = b_hit + 1
+         WHERE
+            b_num = #{bNum}
+      ]]>
+   </update>
    <insert id="addBoard" parameterType="org.big.dto.BoardDto">
         <![CDATA[
            INSERT INTO pro_board

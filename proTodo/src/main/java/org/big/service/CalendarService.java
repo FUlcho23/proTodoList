@@ -10,4 +10,6 @@ public interface CalendarService {
 	 void deleteTodo(String tdId) throws Exception;
 	 void updateTodo(TodoDto todo) throws Exception;
 	 String getTeamName(String tdWorkM) throws Exception;
+	 void updateStatus(List<Integer> ids, String status);
+	 void updateHidden(List<Integer> ids, int hidden);
 }

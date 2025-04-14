@@ -15,25 +15,28 @@
 	<br>
 	
 	<div>
-	<form action="/login/memberadd" method="post">
+	<form action="/login/memberadd" method="post" th:object="${member}">
 	<label>이름</label>
-	<input type="text" id="mName" name="mName" required>
+	<input type="text" id="mName" name="mName" th:field="*{mName}" required>
 	<br><br>
 	
 	<label>아이디</label>
-	<input type="text" id="memberId" name="memberId" required>
+	<input type="text" id="memberId" name="memberId" th:field="*{memberId}" required>
 	<br><br>
 	<label>비밀번호</label>
-	<input type="password" id="mPassword" name="mPassword" required>
+	<input type="password" id="mPassword" name="mPassword" th:field="*{mPassword}" required>
 	<br><br>
 	<label>전화번호</label>
-	<input type="text" id="mPhone" name="mPhone" required>
+	<input type="text" id="mPhone" name="mPhone" th:field="*{mPhone}" required>
 	<br><br>
 	<label>이메일</label>
-	<input type="text" id="mEmail" name="mEmail" required>
+	<input type="text" id="mEmail" name="mEmail" th:field="*{mEmail}" required>
 	<br><br>
 	<button type="submit" class="btn">가입하기</button>
 	</form>
+	</div>
+	<div th:if="${msg}" class="alert alert-danger" role="alert">
+    	[[${msg}]]
 	</div>
 
 	<br>

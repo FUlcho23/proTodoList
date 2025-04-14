@@ -14,4 +14,8 @@ public class MemberDto {
 	private String mEmail;
 	private LocalDateTime mRegistDay; //작성일시
 	
+	//중복검사용
+	private int phoneExists;
+    private int emailExists;
+	
 }

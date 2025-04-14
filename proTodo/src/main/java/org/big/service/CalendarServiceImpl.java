@@ -56,4 +56,10 @@ public class CalendarServiceImpl implements CalendarService{
 		}
     }
 
+	@Override
+	public List<TodoDto> selectTodoByTeam(String memberId) {
+		// TODO Auto-generated method stub
+		return calenderMapper.selectTodoByTeam(memberId);
+	}
+
 }

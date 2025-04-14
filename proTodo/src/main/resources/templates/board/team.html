@@ -32,6 +32,9 @@
                 <input type="text" name="tName" placeholder="팀 이름 입력" required>
                 <input type="submit" value="팀 만들기">
             </form>
+            <div th:if="${msg}" class="alert alert-danger" role="alert">
+		    	[[${msg}]]
+			</div>
         </div>
 
         <!-- 팀이 있을 경우 -->

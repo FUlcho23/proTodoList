@@ -4,6 +4,7 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="org.big.mapper.proTodoMapper">
+	<!-- 게시글 목록 불러오기 -->
    <select id="selectBoardList" resultType="org.big.dto.BoardDto">
    		<![CDATA[
            SELECT
@@ -14,6 +15,7 @@
            ORDER BY b_num DESC
         ]]>
    </select>
+   <!-- 조회수 증가 -->
    <update id="updateHitCount" parameterType="int">
       <![CDATA[
          UPDATE
@@ -24,6 +26,7 @@
             b_num = #{bNum}
       ]]>
    </update>
+   <!-- 게시글 작성 -->
    <insert id="addBoard" parameterType="org.big.dto.BoardDto">
         <![CDATA[
            INSERT INTO pro_board
@@ -42,6 +45,7 @@
            )
         ]]>
    </insert>
+   <!-- 게시글 상세 불러오기 -->
    <select id="selectBoardDetail" resultType="org.big.dto.BoardDto" parameterType="int">
       <![CDATA[
          SELECT
@@ -57,6 +61,7 @@
             b_num=#{bNum}
       ]]>
    </select>
+   <!-- 게시글 수정 -->
    <update id="updateBoard" parameterType="org.big.dto.BoardDto">
       <![CDATA[
          UPDATE
@@ -68,14 +73,14 @@
                b_num = #{bNum}
       ]]>
    </update>
-
+	<!-- 게시글 삭제 -->
    <update id="deleteBoard" parameterType="int">
       <![CDATA[
          DELETE FROM pro_board
            WHERE b_num = #{bNum}
       ]]>
    </update>
-   
+   <!-- 로그인 -->
    <select id="loginFindMember" resultType="org.big.dto.MemberDto">
    		<![CDATA[
    			SELECT
@@ -84,7 +89,7 @@
    			WHERE member_id = #{memberId}
    		]]>
    </select>
-   
+   <!-- 회원가입 -->
    <insert id="addMember" parameterType="org.big.dto.MemberDto">
         <![CDATA[
            INSERT INTO pro_member
@@ -107,6 +112,7 @@
            )
         ]]>
    </insert>
+   <!-- 회원정보 불러오기 -->
    <select id="selectMemberbyId" resultType="org.big.dto.MemberDto">
    		<![CDATA[
            SELECT
@@ -121,6 +127,7 @@
            	 member_id = #{memberId}
         ]]>
    </select>
+   <!-- 회원정보 수정 -->
    <update id="updateMember" parameterType="org.big.dto.MemberDto">
       <![CDATA[
          UPDATE
@@ -135,7 +142,14 @@
             member_id = #{memberId}
       ]]>
    </update>
-   
+   <!-- 회원 탈퇴 -->
+   <update id="deleteMember" parameterType="String">
+      <![CDATA[
+         DELETE FROM pro_member
+           WHERE member_id = #{memberId}
+      ]]>
+   </update>
+   <!-- 팀 정보 불러오기 -->
    <select id="selectTeam" resultType="org.big.dto.TeamDto">
    		<![CDATA[
           SELECT 
@@ -154,6 +168,7 @@
 			    t.t_name = (SELECT t_name FROM pro_team WHERE member_id = #{memberId})
         ]]>
    </select>
+   <!-- 팀 셋 정보 불러오기 -->
    <select id="selectTeamSet" resultType="org.big.dto.TeamDto">
    		<![CDATA[
           SELECT 
@@ -166,7 +181,7 @@
           	t_name = (SELECT t_name FROM pro_team WHERE member_id = #{memberId})
         ]]>
    </select>
-   
+   <!-- 팀 추가 -->
    <insert id="addTeam" parameterType="org.big.dto.TeamDto">
         <![CDATA[
            INSERT INTO pro_team
@@ -183,6 +198,18 @@
            )
         ]]>
    </insert>
+   <!-- 팀 존재여부 조회 -->
+   <select id="selectExistsBytName" parameterType="String" resultType="int">
+   		<![CDATA[
+           SELECT
+              COUNT(*)
+           FROM
+              pro_team
+           WHERE
+           	  t_name = #{tName}
+        ]]>
+   </select>
+   <!-- 팀원 추가 -->
    <insert id="addTeamMember" parameterType="org.big.dto.TeamDto">
         <![CDATA[
            INSERT INTO pro_team
@@ -199,12 +226,53 @@
            )
         ]]>
    </insert>
+   <!-- 팀원 삭제 -->
+   <update id="deleteTeamMember" parameterType="String">
+      <![CDATA[
+         DELETE FROM pro_team
+           WHERE member_id = #{memberId}
+      ]]>
+   </update>
+   <!-- phon, email 존재(중복)여부 한번에! -->
+   <select id="selectExistsByPE" parameterType="String" resultType="org.big.dto.MemberDto">
+	   <![CDATA[
+	   		SELECT
+			    MAX(CASE WHEN m_phone = #{mPhone} THEN 1 ELSE 0 END) AS phoneExists,
+			    MAX(CASE WHEN m_email = #{mEmail} THEN 1 ELSE 0 END) AS emailExists
+			FROM pro_member
+	   ]]>
+   </select>
+      
+   <!-- id 존재여부 조회 -->
+   <select id="selectExistsBymId" parameterType="String" resultType="int">
+   		<![CDATA[
+           SELECT
+              COUNT(*)
+           FROM
+              pro_member
+           WHERE
+           	  member_id = #{memberId}
+        ]]>
+   </select>
+   <!-- 해당 멤버의 팀 존재여부 조회 -->
+   <select id="selectTeamExistsBymId" parameterType="String" resultType="int">
+   		<![CDATA[
+           SELECT
+              COUNT(*)
+           FROM
+              pro_team
+           WHERE
+           	  member_id = #{memberId}
+        ]]>
+   </select>
+   <!-- 팀 탈퇴 -->
    <update id="deleteTeambyId" parameterType="String">
       <![CDATA[
          DELETE FROM pro_team
            WHERE member_id = #{memberId}
       ]]>
    </update>
+   <!-- 팀 이름을 통해 팀 삭제 -->
    <update id="deleteTeambyTeamName" parameterType="String">
       <![CDATA[
          DELETE FROM pro_team

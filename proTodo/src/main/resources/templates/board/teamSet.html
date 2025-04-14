@@ -11,27 +11,29 @@
 	
 	<div>
 	<h2>팀원 추가/삭제</h2>
-	<form>
 	<table class="table">
-                <thead>
-                    <tr>
-                        <th>이름</th>
-                        <th>직책</th>
-                        <th>삭제</th>
-                    </tr>
-                </thead>
-                <tbody>
-				    <tr th:each="team : ${teamList}">
-				        <td th:text="${team.memberId}"></td>
-				        <td th:text="${team.tRole}"></td>
-				        <td>
-				        	<input type="button" value="삭제"
-				        	th:if="${team.memberId != session.memberId}">
-				        </td>
-				    </tr>
-				</tbody>
-            </table>
-            </form>
+		<thead>
+			<tr>
+                <th>이름</th>
+                <th>직책</th>
+                <th>삭제</th>
+            </tr>
+        </thead>
+            <tbody>
+				<tr th:each="team : ${teamList}">
+				    <td th:text="${team.memberId}" name="memberId" value="${team.memberId}"></td>
+				    <td th:text="${team.tRole}"></td>
+				    <td>
+			            <form th:action="@{/main/team/teamset/delTeamMember}" method="post"
+			                  th:if="${team.memberId != session.memberId}">
+			                <input type="hidden" name="memberId" th:value="${team.memberId}" />
+			                <input type="submit" value="삭제"
+			                       onclick="return confirm('정말 삭제하시겠습니까?');" />
+			            </form>
+			        </td>
+				</tr>
+			</tbody>
+    </table>
 	<form action="/main/team/teamset/addTeamMember" method="post">
 		<label>팀원 아이디: </label>
 		<input type="text" name="memberId">
@@ -43,6 +45,10 @@
 		<br>
 		<input type="submit" value="추가">
 	</form>
+	</div>
+	<br>
+	<div th:if="${msg}" class="alert alert-danger" role="alert">
+    	[[${msg}]]
 	</div>
 	
 	<br>

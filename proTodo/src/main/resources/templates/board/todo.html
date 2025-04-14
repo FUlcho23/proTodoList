@@ -273,13 +273,13 @@
             </tr>
          </thead>
          <tbody>
-		    <tr th:each="todo : ${todoList}">
-		        <td th:text="${todo.tdWorkM}"></td>
-		        <td class="title" th:text="${todo.tdTodo}"></td>
-		        <td th:text="${todo.tdEnd != null ? #temporals.format(todo.tdEnd, 'yyyy-MM-dd HH:mm:ss') : '-'}"></td>
-		    	<td th:text="${todo.tdStatus}"></td>
+		    <tr th:each="stodo : ${sharedList}">
+		        <td th:text="${stodo.tdWorkM}"></td>
+		        <td class="title" th:text="${stodo.tdTodo}"></td>
+		        <td th:text="${stodo.tdEnd != null ? #temporals.format(stodo.tdEnd, 'yyyy-MM-dd HH:mm:ss') : '-'}"></td>
+		    	<td th:text="${stodo.tdStatus}"></td>
 		    </tr>
-		    <tr th:if="${#lists.isEmpty(todoList)}">
+		    <tr th:if="${#lists.isEmpty(sharedList)}">
 		        <td colspan="4">아직 공유된 일정이 없습니다.</td>
 		    </tr>
 		</tbody>

@@ -12,4 +12,5 @@ public interface CalendarService {
 	 String getTeamName(String tdWorkM) throws Exception;
 	 void updateStatus(List<Integer> ids, String status);
 	 void updateHidden(List<Integer> ids, int hidden);
+	 List<TodoDto> selectTodoByTeam(String memberId);
 }

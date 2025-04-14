@@ -29,18 +29,16 @@ import jakarta.servlet.http.HttpSession;
 public class ProTodoController {
 	 
 	@Autowired
-	   private ProTodoService ProTodoService;
-	
-	@Autowired
-	private proTodoMapper todoMapper;
-	
+	private ProTodoService ProTodoService;
 	@Autowired
 	private CalendarService calendarService; 
 	
 	@RequestMapping("/main/todo") public String todo(HttpSession session, Model model)throws Exception{
 		String tdWorkM = (String) session.getAttribute("memberId");
         List<TodoDto> todoList = calendarService.selectTodo(tdWorkM);
-
+        List<TodoDto> sharedList = calendarService.selectTodoByTeam(tdWorkM);
+        
+        model.addAttribute("sharedList", sharedList);
         model.addAttribute("todoList", todoList);  // Thymeleaf에서 사용
 		return "board/todo.html"; 
 	}
@@ -122,10 +120,18 @@ public class ProTodoController {
         return "board/team.html"; // Thymeleaf 템플릿 (team.html)
 	}
 	@RequestMapping("/main/team/addteam")
-	public String teamadd(HttpSession session, TeamDto team)throws Exception{
+	public String teamadd(HttpSession session, TeamDto team, RedirectAttributes redirectAttrs)throws Exception{
 		String memberId = (String) session.getAttribute("memberId");
 		team.setMemberId(memberId);
-		ProTodoService.addTeam(team);
+		
+		String tName = team.getTName();
+		if(ProTodoService.selectExistsBytName(tName)) {
+			redirectAttrs.addFlashAttribute("msg", "이미 존재하는 팀 이름 입니다.");
+		}
+		else {
+			ProTodoService.addTeam(team);
+		}
+		
 		return "redirect:/main/team";
 	}
 	@RequestMapping("/main/team/deletebyid")
@@ -149,11 +155,27 @@ public class ProTodoController {
 		return "board/teamSet.html";
 	}
 	@RequestMapping("/main/team/teamset/addTeamMember")
-	public String addteammember(TeamDto team)throws Exception{
-		ProTodoService.addTeamMember(team);
+	public String addteammember(TeamDto team, RedirectAttributes redirectAttrs)throws Exception{
+		String memberId = team.getMemberId();
+		if(ProTodoService.selectExistsBymId(memberId)) {
+			if(!ProTodoService.selectTeamExistsBymId(memberId)) {
+				ProTodoService.addTeamMember(team);
+			}
+			else {
+				redirectAttrs.addFlashAttribute("msg", "이미 팀에 소속된 사용자입니다.");
+			}
+		}
+		else {
+			 redirectAttrs.addFlashAttribute("msg", "존재하지 않는 사용자입니다.");
+		}
+		
 		return "redirect:/main/team/teamset";
 	}
-	
+	@RequestMapping("/main/team/teamset/delTeamMember")
+	public String delteammember(TeamDto team)throws Exception{
+		ProTodoService.deleteTeamMember(team.getMemberId());
+		return "redirect:/main/team/teamset";
+	}
 	//====================================================================mypage
 	@RequestMapping("/main/mypage")
 	 public ModelAndView mypage(HttpSession session)throws Exception{
@@ -169,13 +191,20 @@ public class ProTodoController {
 	}
 	@RequestMapping("/main/mypage/updatemember")
 	 public String updatemember(@ModelAttribute MemberDto member,HttpSession session)throws Exception{
-		//세션에서 id가져오기
 		String memberId = (String) session.getAttribute("memberId");
 		
 		member.setMemberId(memberId);
 		ProTodoService.updateMember(member);
 		
 		return "redirect:/main/mypage";
+	}
+	@RequestMapping("/main/mypage/deletemember")
+	 public String deletemember(HttpSession session)throws Exception{
+		String memberId = (String) session.getAttribute("memberId");
+		
+		ProTodoService.deleteMember(memberId);
+		session.invalidate();
+		return "redirect:/home";
 	}
 	@RequestMapping("/main/login")
 	 public String login(@RequestParam(value = "error", required = false) String error, Model model) {
@@ -188,7 +217,7 @@ public class ProTodoController {
     public String loginProcess(@RequestParam String id, @RequestParam String pwd,HttpSession session, RedirectAttributes redirectAttributes) {
 		
 		// ✅ DB에서 사용자 조회
-	    MemberDto memberId = todoMapper.loginFindMember(id);
+	    MemberDto memberId = ProTodoService.loginFindMember(id);
 
 	    if (memberId == null || !memberId.getMPassword().equals(pwd)) {
 	        redirectAttributes.addAttribute("error", "1");
@@ -207,13 +236,40 @@ public class ProTodoController {
 		session.invalidate();
         return "redirect:/home";
     }
-	@RequestMapping("/login/memberadd")
-	 public String memberaddhome()throws Exception{
+	@GetMapping("/login/memberadd")
+	 public String memberaddhome(Model model, @ModelAttribute("member") MemberDto member)throws Exception{
+		if (!model.containsAttribute("member")) {
+			model.addAttribute("member", new MemberDto());
+		}
 		return "board/memberadd.html";
 	}
 	@PostMapping("/login/memberadd")
-	public String memberadd(MemberDto member) throws Exception{
-		ProTodoService.addMember(member);
-		return "redirect:/main/login";
+	public String memberadd(MemberDto member, RedirectAttributes rA) throws Exception{
+		String mPhone = member.getMPhone();
+		String mEmail = member.getMEmail();
+		MemberDto checklist = ProTodoService.selectExistsByPE(mPhone, mEmail);
+		if(!ProTodoService.selectExistsBymId(member.getMemberId())) {
+			if(checklist.getPhoneExists()==0){
+				if(checklist.getEmailExists()==0) {
+					ProTodoService.addMember(member);
+					return "redirect:/main/login";
+				}
+				else {
+					rA.addFlashAttribute("msg", "이미 가입된 이메일입니다.");
+					rA.addFlashAttribute("member", member); 
+					return "redirect:/login/memberadd";
+				}
+			}
+			else {
+				rA.addFlashAttribute("msg", "이미 가입된 전화번호입니다.");
+				rA.addFlashAttribute("member", member); 
+				return "redirect:/login/memberadd";
+			}
+		}
+		else {
+			rA.addFlashAttribute("msg", "이미 존재하는 아이디입니다.");
+			rA.addFlashAttribute("member", member); 
+			return "redirect:/login/memberadd";
+		}
 	}
 }

@@ -52,21 +52,39 @@
             td_allday = #{tdAllday}
         WHERE td_id = #{tdId}
     </update>
+    <!-- 팀 이름 -->
     <select id="getTeamName" parameterType="String" resultType="String">
     	SELECT t_name FROM pro_team WHERE member_id = #{tdWorkM}
 	</select>
+	<!-- 상태(일정 진도)를 변경 -->
 	<update id="updateStatus" parameterType="org.big.dto.TodoDto">
     	UPDATE todo_list
     	SET 
     		td_status = #{status} 
     	WHERE td_id = #{id}
 	</update>
-	
+	<!-- 공개값을 변경 -->
 	<update id="updateHidden" parameterType="org.big.dto.TodoDto">
 	    UPDATE todo_list
 	    SET 
 	    	td_hidden = #{hidden}
 	    WHERE td_id = #{id}
 	</update>
+	<!-- 같은 팀 일정 불러오기 -->
+	<select id="selectTodoByTeam" resultType="org.big.dto.TodoDto" parameterType="String">
+	    SELECT *
+	    FROM todo_list
+	    WHERE td_hidden = 1
+	      AND member_id IN (
+	          SELECT member_id
+	          FROM pro_team
+	          WHERE t_name = (
+	              SELECT t_name
+	              FROM pro_team
+	              WHERE member_id = #{memberId}
+	          )
+	      )
+	      ORDER BY td_end ASC
+	</select>
     
 </mapper>

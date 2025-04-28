@@ -294,7 +294,6 @@
     <!-- 개인 일정 -->
     <div class="schedule-section">
         <h2>미수행된 개인 일정</h2>
-        <form action="#" method="post">
         <table class="board_list">
         	<colgroup>
 	            <col width="15%"/>
@@ -318,7 +317,7 @@
 			    	<td> <input type="checkbox" name="todoId" th:value="${todo.tdId}"></td>
 			    </tr>
 			    <tr th:if="${#lists.isEmpty(todoList)}">
-			        <td colspan="4">아직 공유된 일정이 없습니다.</td>
+			        <td colspan="4">아직 일정이 없습니다.</td>
 			    </tr>
          	</tbody>
         </table>
@@ -326,7 +325,6 @@
 			<input type="button" value="완료" onclick="updateStatus('Y')">
 			<input type="button" value="공유" onclick="updateHidden(1)">
 			<input type="button" value="공유 취소" onclick="updateHidden(0)">
-        </form>
         <script>
         	function getSelectedIds() {
 			    let selected = [];

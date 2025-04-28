@@ -202,34 +202,27 @@ public class ProTodoController {
 		session.invalidate();
 		return "redirect:/home";
 	}
+	//====================================================================login
 	@RequestMapping("/main/login")
 	 public String login(@RequestParam(value = "error", required = false) String error, Model model) {
         
         return "board/login.html"; 
     }
 	@PostMapping("/main/login")
-    public String loginProcess(@RequestParam String id, @RequestParam String pwd,HttpSession session, RedirectAttributes redirectAttrs) {
-		
-		// ✅ DB에서 사용자 조회
+    public String loginProcess(@RequestParam String id, @RequestParam String pwd,HttpSession session, RedirectAttributes reA) {
+		//DB에서 사용자 조회
 	    MemberDto memberId = ProTodoService.loginFindMember(id);
 
 	    if (memberId == null || !memberId.getMPassword().equals(pwd)) {
-	    	redirectAttrs.addFlashAttribute("msg", "아이디 또는 비밀번호를 확인해주세요.");
+	    	reA.addFlashAttribute("msg", "아이디 또는 비밀번호를 확인해주세요.");
 	        return "redirect:/main/login"; // 로그인 실패 시 다시 로그인 페이지로 이동
 	    }
-        
-        // ✅ 로그인 성공 시 세션에 사용자 ID 저장
+        //로그인 성공 시 세션에 사용자 ID 저장
         session.setAttribute("memberId", memberId.getMemberId());
 
         return "redirect:/home"; // 로그인 성공 시 홈 화면으로 이동
     }
-	
-	@GetMapping("/logout")
-    public String logout(HttpSession session) {
-        // ✅ 로그아웃 시 세션 삭제
-		session.invalidate();
-        return "redirect:/home";
-    }
+	//====================================================================memberadd
 	@GetMapping("/login/memberadd")
 	 public String memberaddhome(Model model, @ModelAttribute("member") MemberDto member)throws Exception{
 		if (!model.containsAttribute("member")) {

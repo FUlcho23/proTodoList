@@ -47,8 +47,10 @@
             <p class="register-link">회원이 아니신가요? <a href="/login/memberadd">가입하기</a></p>
         </div>
     </div>
-    <!-- 서버에서 에러 메시지가 있으면 보여줌 -->
-    <div th:if="${errorMessage}" class="alert" id="error-message" th:text="${errorMessage}" style="display: block;"></div>
+    <!-- 로그인 실패시 메세지 -->
+    <div th:if="${msg}" class="alert alert-danger" role="alert">
+    	[[${msg}]]
+	</div>
     
     <br>
     <div th:replace="~{board/footer}"></div>

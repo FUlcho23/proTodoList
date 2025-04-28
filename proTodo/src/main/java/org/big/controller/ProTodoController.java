@@ -100,24 +100,23 @@ public class ProTodoController {
 	//====================================================================team
 	@RequestMapping("/main/team")
 	 public String team(HttpSession session, Model model)throws Exception{
-		// 현재 로그인된 사용자 ID 가져오기 (세션 사용)
+		// 현재 로그인된 사용자 ID
         String memberId = (String) session.getAttribute("memberId");
 
         // 팀 정보 가져오기
         List<TeamDto> teamList = ProTodoService.getTeamInfo(memberId);
 
-        // 팀이 존재하는지 여부 확인
+        // 팀 존재여부 확인
         boolean hasTeam = !teamList.isEmpty();
         boolean isLeader = hasTeam && teamList.stream()
                 .anyMatch(team -> team.getMemberId().equals(memberId) && team.getIsLeader() == 1);
-
         // 모델에 데이터 추가
         model.addAttribute("memberId", memberId);
         model.addAttribute("hasTeam", hasTeam);
         model.addAttribute("isLeader", isLeader);
         model.addAttribute("teamList", teamList);
 
-        return "board/team.html"; // Thymeleaf 템플릿 (team.html)
+        return "board/team.html";
 	}
 	@RequestMapping("/main/team/addteam")
 	public String teamadd(HttpSession session, TeamDto team, RedirectAttributes redirectAttrs)throws Exception{
@@ -149,7 +148,6 @@ public class ProTodoController {
 	public String teamset(Model model, HttpSession session)throws Exception{
 		String memberId = (String) session.getAttribute("memberId");
 		List<TeamDto> teamList = ProTodoService.selectTeamSet(memberId);
-		// Thymeleaf에서 사용할 데이터 추가
 		model.addAttribute("memberId", memberId);
 		model.addAttribute("teamList", teamList); 
 		return "board/teamSet.html";
@@ -158,17 +156,15 @@ public class ProTodoController {
 	public String addteammember(TeamDto team, RedirectAttributes redirectAttrs)throws Exception{
 		String memberId = team.getMemberId();
 		if(ProTodoService.selectExistsBymId(memberId)) {
-			if(!ProTodoService.selectTeamExistsBymId(memberId)) {
-				ProTodoService.addTeamMember(team);
-			}
-			else {
-				redirectAttrs.addFlashAttribute("msg", "이미 팀에 소속된 사용자입니다.");
-			}
+			if (!ProTodoService.selectTeamExistsBymId(memberId)) {
+		        ProTodoService.addTeamMember(team);
+		    } else {
+		        redirectAttrs.addFlashAttribute("msg", "이미 팀에 소속된 사용자입니다.");
+		    }
 		}
 		else {
 			 redirectAttrs.addFlashAttribute("msg", "존재하지 않는 사용자입니다.");
 		}
-		
 		return "redirect:/main/team/teamset";
 	}
 	@RequestMapping("/main/team/teamset/delTeamMember")
@@ -208,19 +204,17 @@ public class ProTodoController {
 	}
 	@RequestMapping("/main/login")
 	 public String login(@RequestParam(value = "error", required = false) String error, Model model) {
-        if (error != null) {
-            model.addAttribute("errorMessage", "아이디와 비밀번호를 확인해 주세요");
-        }
+        
         return "board/login.html"; 
     }
 	@PostMapping("/main/login")
-    public String loginProcess(@RequestParam String id, @RequestParam String pwd,HttpSession session, RedirectAttributes redirectAttributes) {
+    public String loginProcess(@RequestParam String id, @RequestParam String pwd,HttpSession session, RedirectAttributes redirectAttrs) {
 		
 		// ✅ DB에서 사용자 조회
 	    MemberDto memberId = ProTodoService.loginFindMember(id);
 
 	    if (memberId == null || !memberId.getMPassword().equals(pwd)) {
-	        redirectAttributes.addAttribute("error", "1");
+	    	redirectAttrs.addFlashAttribute("msg", "아이디 또는 비밀번호를 확인해주세요.");
 	        return "redirect:/main/login"; // 로그인 실패 시 다시 로그인 페이지로 이동
 	    }
         

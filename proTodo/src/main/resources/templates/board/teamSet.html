@@ -40,8 +40,7 @@
 		<label>직책: </label>
 		<label>팀원</label><input type="radio" value="팀원" name="tRole" checked="checked">
 		<label>팀장</label><input type="radio" value="팀장" name="tRole">
-		<!-- 팀 이름을 hidden input으로 설정 -->
-	<input type="hidden" th:value="${teamList[0].tName}" name="tName">
+		<input type="hidden" th:value="${teamList[0].tName}" name="tName">
 		<br>
 		<input type="submit" value="추가">
 	</form>

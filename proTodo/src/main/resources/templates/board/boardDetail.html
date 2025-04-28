@@ -63,10 +63,8 @@
 			type="button" id="edit" value="수정하기" class="btn"> <input
 			type="button" id="delete" value="삭제하기" class="btn">
 
-		<script
-			src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script type="text/javascript">
-			$(document).ready(function() {
 				$("#list").on("click", function() {
 					location.href = "/main/board";
 				});
@@ -80,7 +78,6 @@
 					frm.action = "/main/board/delete"
 					frm.submit();
 				});
-			});
 		</script>
 	</div>
 	

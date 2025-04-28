@@ -34,14 +34,11 @@
                   #{tdAllday}
        )
     </insert>
-
     <!-- 일정 삭제하기 -->
     <delete id="deleteTodo">
         DELETE FROM todo_list 
         WHERE td_id = #{tdId}
     </delete>
-
-
     <!-- 일정 수정하기 -->
     <update id="updateTodo" parameterType="org.big.dto.TodoDto">
         UPDATE todo_list 

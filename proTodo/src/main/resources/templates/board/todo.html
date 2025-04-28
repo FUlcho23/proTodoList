@@ -87,7 +87,7 @@
 		
     </style>
      <script>
-        $(document).ready(function () {
+        $(function () {
             let calendarTag = document.getElementById('calendar'); // full-calendar 생성
             let calendar = new FullCalendar.Calendar(calendarTag, {
                 height: '550px',                        
@@ -125,15 +125,14 @@
                 select: function (arg) {         
                     let title = prompt('일정 입력');
                     if (title) {
-                     let isAllDay = arg.allDay ? 1 : 0;  // ✅ 확실하게 1 또는 0으로 변환
+                     let isAllDay = arg.allDay ? 1 : 0;
                        let newData = {
-				            tdTodo: title, // 기존 오류 수정
-				            tdStart: arg.startStr, // FullCalendar에서는 startStr 사용
-				            tdEnd: arg.endStr,  // FullCalendar에서는 endStr 사용
+				            tdTodo: title,
+				            tdStart: arg.startStr,
+				            tdEnd: arg.endStr,
 				            tdAllday: isAllDay
 				        };
-				        console.log("추가하는 일정 데이터:", newData); // 🔍 디버깅용 로그
-
+				        console.log("추가하는 일정 데이터:", newData);//확인
                         $.ajax({
                             url: "/addTodo",
                             method: "POST",
@@ -143,22 +142,23 @@
                             success:function (data){
                                 if(data != null){
 				                    calendar.addEvent({
-				                        id: data.tdId,  // 이벤트 ID 설정
-				                        title: data.tdTodo, // 일정 제목 설정
+				                        id: data.tdId, 
+				                        title: data.tdTodo, 
 				                        start: data.tdStart,
 				                        end: data.tdEnd,
 				                        allDay: data.tdAllday == 1,
 				                        editable: true,
-				                        color: getEventColor(data.tdStatus || 'N') // 색상도 적용하고 싶다면
+				                        color: getEventColor(data.tdStatus || 'N') 
 				                    });
 				                    console.log(data.tdAllday);
-									window.location.reload();  // 성공 후 페이지 새로고침
+									window.location.reload();//전체 새로고침(이유:아래 리스트에 반영안됨)
                                 }
                             }
                         });
                     }
-                    calendar.unselect();
+                    calendar.unselect();//드래그 해제
                 },
+                //일정 삭제
                 eventClick: function (arg) {
                     if (confirm("선택한 일정을 삭제하시겠습니까?")) {
                         $.ajax({
@@ -176,6 +176,7 @@
                         });
                     }
                 },
+                //일정 수정(다른 곳으로 이동)
                 eventDrop: function(arg) {              
                     let event = {
                         tdId: arg.event.id,
@@ -191,6 +192,7 @@
                         data: JSON.stringify(event)
                     });
                 },
+                //일정 수정(일정 늘리기)
                 eventResize: function(arg) {            
                     let event = {
                         tdId: arg.event.id,
@@ -206,13 +208,13 @@
                         data: JSON.stringify(event)
                     });
                 },
-                // 이벤트
+                //일정 불러오기
 		        events: [
 		            $.ajax({
 		                type: "get",
 		                url: "/todoData",
 		                success: function (data) {
-		                 console.log("불러온 일정 데이터:", data); // ✅ data 사용
+		                 console.log("불러온 일정 데이터:", data);
 		                    if (data != null) {
 		                        for (let i = 0; i < data.length; i++) {
 			                        let progress = data[i].tdStatus; // 진행도 값 ('N', 'P', 'Y')
@@ -223,7 +225,7 @@
 		                                start: data[i].tdStart,
 		                                end: data[i].tdEnd,
 		                                allDay: data[i].tdAllday,
-		                                editable: true,// default : false 이벤트 드래그 등의 편집여부를 설정함
+		                                editable: true,//이벤트 드래그 등의 편집여부 설정
 		                                color: eventColor // 색상 적용
 		                            })
 		                        }
@@ -253,8 +255,8 @@
     <br>
     <div class="schedule-container">
     <br>
-    <!-- 팀원 일정 -->
     
+    <!-- 팀원 일정 -->
     <div class="schedule-section">
         <h2>팀원 일정</h2>
         <table class="board_list">
@@ -284,7 +286,6 @@
 		    </tr>
 		</tbody>
       </table>
-        
     </div>
     
     <!-- 가운데 구분선 -->
@@ -334,7 +335,6 @@
 			    });
 			    return selected;
 			}
-			
 			// 진행 상태 업데이트 (P, Y 변경)
 			function updateStatus(status) {
 			    let selectedIds = getSelectedIds();
@@ -342,7 +342,6 @@
 			        alert("일정을 선택해주세요.");
 			        return;
 			    }
-			
 			    fetch('/updateStatus', {
 			        method: 'POST',
 			        headers: { 'Content-Type': 'application/json' },
@@ -353,7 +352,6 @@
 			          else alert("Status업데이트 실패");
 			      });
 			}
-			
 			// 공유 상태 업데이트 (0: 비공개, 1: 공개)
 			function updateHidden(hiddenValue) {
 			    let selectedIds = getSelectedIds();
@@ -361,7 +359,6 @@
 			        alert("일정을 선택해주세요.");
 			        return;
 			    }
-			
 			    fetch('/updateHidden', {
 			        method: 'POST',
 			        headers: { 'Content-Type': 'application/json' },

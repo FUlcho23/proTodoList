@@ -153,19 +153,16 @@
    <select id="selectTeam" resultType="org.big.dto.TeamDto">
    		<![CDATA[
           SELECT 
-			    t.t_id, 
-			    t.t_name, 
-			    t.member_id, 
-			    t.t_role, 
-			    m.m_name,
-			    (CASE WHEN t.t_id IS NOT NULL THEN 1 ELSE 0 END) AS hasTeam,
-			    (CASE WHEN t.member_id = #{memberId} AND t.t_role = '팀장' THEN 1 ELSE 0 END) AS isLeader
+			    t_id, 
+			    t_name, 
+			    member_id, 
+			    t_role, 
+			    (CASE WHEN t_id IS NOT NULL THEN 1 ELSE 0 END) AS hasTeam,
+			    (CASE WHEN member_id = #{memberId} AND t_role = '팀장' THEN 1 ELSE 0 END) AS isLeader
 			FROM 
-			    pro_team t
-			JOIN 
-			    pro_member m ON t.member_id = m.member_id
+			    pro_team 
 			WHERE 
-			    t.t_name = (SELECT t_name FROM pro_team WHERE member_id = #{memberId})
+			    t_name = (SELECT t_name FROM pro_team WHERE member_id = #{memberId})
         ]]>
    </select>
    <!-- 팀 셋 정보 불러오기 -->

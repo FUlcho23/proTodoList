@@ -39,7 +39,6 @@ public class CalendarController {
 	@ResponseBody
 	public List<TodoDto> getTodoData(HttpSession session) throws Exception {
 		String tdWorkM = (String) session.getAttribute("memberId");
-		
 	    return calendarService.selectTodo(tdWorkM);
 	}
 	
@@ -55,28 +54,22 @@ public class CalendarController {
 
         // UTC 시간을 LocalDateTime으로 변환
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-     // 날짜 변환 (ISO 형식을 오라클 형식으로 변환)
         // tdStart 변환
         if (map.get("tdStart") != null) {
             String startDate = map.get("tdStart").toString();
-            
-            
             if (startDate.length() < 19) {
                 // 시간이 없으면 "00:00:00" 추가
             	startDate = startDate + " 00:00:00".substring(startDate.length() - 10);
                 todo.setTdStart(LocalDateTime.parse(startDate, formatter));
             }
             else {
-            	// ✅ OffsetDateTime을 사용하여 변환
 	            LocalDateTime localStartDate = OffsetDateTime.parse(startDate).toLocalDateTime();
 	            todo.setTdStart(localStartDate);
             }
         }
-
         // tdEnd 변환
         if (map.get("tdEnd") != null) {
             String endDate = map.get("tdEnd").toString();
-            
             if (endDate.length() < 19) {
                 // 시간이 없으면 "00:00:00" 추가
                 endDate = endDate + " 00:00:00".substring(endDate.length() - 10);
@@ -141,7 +134,7 @@ public class CalendarController {
             return "fail";
         }
     }
-	
+	//상태 변경
 	@PostMapping("/updateStatus")
 	@ResponseBody
 	public Map<String, Object> updateStatus(@RequestBody Map<String, Object> requestData) {
@@ -160,7 +153,7 @@ public class CalendarController {
 	        return Collections.singletonMap("success", false);
 	    }
 	}
-
+	//팀 공개여부 변경
 	@PostMapping("/updateHidden")
 	@ResponseBody
 	public Map<String, Object> updateHidden(@RequestBody Map<String, Object> payload) {

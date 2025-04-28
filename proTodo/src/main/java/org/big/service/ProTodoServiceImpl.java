@@ -108,8 +108,8 @@ public class ProTodoServiceImpl implements ProTodoService{
 	}
 	@Override
 	public boolean selectTeamExistsBymId(String memberId) {
-		int ex = proTodoMapper.selectExistsBymId(memberId);
-		return ex == 0;
+		int ex = proTodoMapper.selectTeamExistsBymId(memberId);
+		return ex > 0;
 	}
 	@Override
 	public MemberDto selectExistsByPE(String mPhone, String mEmail) {

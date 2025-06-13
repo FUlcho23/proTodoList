@@ -1,7 +1,11 @@
 # Todo List 웹 사이트 만들기
 흐름도
-![웹프로젝트(TODO)개인 drawio](https://github.com/user-attachments/assets/3f6bbf94-016e-44b9-a1d1-a89d7adde70f)
+![1](https://github.com/user-attachments/assets/6692e68a-ada2-4559-9baa-9d47f25c75ca)
+
+![2](https://github.com/user-attachments/assets/6f713e00-6036-4401-aac3-178ac5b3e37b)
+
 프로젝트 내용
+
 ![image](https://github.com/user-attachments/assets/dad9557b-174c-44cb-80e4-3c4a73882788)
 ![image](https://github.com/user-attachments/assets/60d60dfc-0787-47cd-af02-06d1e89d38cd)
 ![image](https://github.com/user-attachments/assets/75df3c61-432e-4b1f-bf1c-b5fae0d88e1a)

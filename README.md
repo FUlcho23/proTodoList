@@ -7,7 +7,8 @@
 2) 개인 일정과 팀원 일정을 함께 확인함으로써, 팀 내 일정과 개인 일정을 조율하는데 용이<br>
 3) 일정 진행도를 공유함으로써 얼마나 일이 진행되고 있는지 파악하기 편리<br>
 <h3>- 프로젝트 선정 배경</h3>
-<h3>- 기술 구상도</h3>
+팀원들과 프로젝트를 진행할 일이 많아지면서 각자의 개인적인 일정이나 진도가 궁금한 경우가 종종 생기고는 했습니다.
+그러나 이러한 정보를 직접 물어보는 건 어색하거나 불편한 사이인 경우 소통이 잘 되지 않기 때문에 일정을 잡을때 곤란한 경우가 있었습니다. 또한, 팀원들과 일정을 조율할 때 각자의 중요한 일정이 무엇인지 공유되지 않으면, 일정을 겹쳐서 잡는 일이 생기기도 했습니다. 그래서 팀원들 간의 일정과 진도를 효율적으로 공유하고 관리할 수 있는 Todo가 있으면 좋겠다는 생각에 이 웹페이지를 개발하게 되었습니다.<br>
 <h3>- 페이지 설계 및 기능</h3>
 <b>메뉴</b></br>
    - 메인, TODO, 팀, 게시판, 마이페이지, 로그인 페이지 진입</br>
@@ -86,11 +87,42 @@ proTodo
 
 ![2](https://github.com/user-attachments/assets/6f713e00-6036-4401-aac3-178ac5b3e37b)
 
-<h2>3. 프로젝트 설치 및 실행방법(환경세팅)</h2>
-<h2>4. 프로젝트 사용 방법(가이드라인)</h2>
-<h2>5. 팀원 및 참고자료</h2>
+<h2>3. 프로젝트 화면</h2>
+ - 메인
+ 
+ ![메인](https://github.com/user-attachments/assets/684b6a2e-b0fe-4983-8a20-5d695c0fbc83)
+
+ - 로그인+회원가입
+
+![로그인+회원가입](https://github.com/user-attachments/assets/d8a55221-4999-4cac-bde6-471ee2ffccdf)
+
+
+ - 마이페이지
+
+![마이페이지 (4)](https://github.com/user-attachments/assets/dabcc999-1309-44eb-988c-e8379612d2c3)
+
+
+ - 게시판
+
+![게시판 (1)](https://github.com/user-attachments/assets/42f0500b-fa8f-40cf-9b9a-c41f75f1de66)
+
+
+ - 팀
+
+![team](https://github.com/user-attachments/assets/8cb6d425-3f73-48ef-9205-27dfc6d6a296)
+
+
+ - 일정관리
+
+![일정관리창](https://github.com/user-attachments/assets/980359a4-fc30-4fc1-891b-7e4bdf82f453)
+
+
+<h2>4. 팀원 및 참고자료</h2>
 <h3>-팀원</h3>
 개인 프로젝트
 <h3>-참고자료</h3>
 [FullCalendar JavaScript API (v6.1.15)](https://fullcalendar.io/docs/initialize-globals)</br>
 [캘린터 API활용법](https://jungmin5600.tistory.com/42)</br>
+<h2>5. 발표에 사용된 PPT</h2>
+
+[[최종]팀별 일정 관리 웹 페이지(개인).pdf](https://github.com/user-attachments/files/21100415/default.pdf)
